@@ -7,6 +7,7 @@
     #The closer one will most likely be on the left, and so it will be knocked left, and the other will be knocked right.\
     #The same point will be used for attack knockback, as it the attacker is closer, then the hurt will go right
     #So if the hurt is closer they will go left
+    #Take in the enemy object to be able to apply knockback
 
 #Define collsion function
     #When a player and enemy collide, they will deal small damage to eachother, and deal more knockback to eachother, with the player getting i-frames
