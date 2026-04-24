@@ -53,8 +53,12 @@ class Player(pygame.sprite.Sprite):
 
     def update(self):
         keys = pygame.key.get_pressed()
-        if keys[pygame.K_LEFT] and self.rect.left > 100: self.rect.x -= self.speed
-        if keys[pygame.K_RIGHT] and self.rect.right < 700: self.rect.x += self.speed
+        if keys[pygame.K_LEFT] or keys[pygame.K_a]:
+            if self.rect.left > 100: 
+                self.rect.x -= self.speed
+        if keys[pygame.K_RIGHT] or keys[pygame.K_d] :
+            if self.rect.right < 700: 
+                self.rect.x += self.speed
 
         self.y_velocity += self.gravity
         self.rect.y += self.y_velocity
@@ -127,7 +131,9 @@ def setup():
     while running:
         for event in pygame.event.get():
             if event.type == pygame.QUIT: running = False
-            if event.type == pygame.KEYDOWN and event.key == pygame.K_UP: player.jump()
+            if event.type == pygame.KEYDOWN:  
+                if event.key == pygame.K_UP or event.key == pygame.K_w or event.key == pygame.K_SPACE: 
+                    player.jump()
             if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1: player.attack()
 
         screen.fill((255, 255, 255))
