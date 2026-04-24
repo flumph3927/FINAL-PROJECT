@@ -112,6 +112,9 @@ class Enemy(pygame.sprite.Sprite):
 
         if self.hit_cooldown > 0: self.hit_cooldown -= 1
 
+
+
+
 def setup():
     player = Player()
     all_sprites, enemies = pygame.sprite.Group(player), pygame.sprite.Group()
