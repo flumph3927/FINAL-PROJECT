@@ -1,6 +1,5 @@
 # CB 1st Room Templates
 
-# from room_classes import *
 # from combat import *
 # import all neccesary sprites
 
@@ -88,3 +87,10 @@
 # class BowlRoom(CombatRoom)
     # def__init__():
         # basic attributes will be #enemies, #platforms, and the background
+
+# class Platform():
+    # def __init__():
+        # basic attributes will be locations, sprite, and rect
+
+    # def draw():
+        # load the platform sprite at the location set
