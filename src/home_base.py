@@ -48,5 +48,41 @@
 
 
 #create class TutorialNPC, sublclass of NPC
+    #create instruction list
     #create function speak, get screen
-        #RUN TUTORIAL. FINISH THIS LEVI
+        #run function tutorial on screen
+
+
+#create function tutorial, get screen
+    #draw background on screen
+    #loop through instructions as instruction
+        #display instruction on screen
+        #until mouse clicked, loop
+    #loop:
+        #spawn enemy
+        #if enemy dead: break out of loop
+    #loop:
+        #spawn 3 more enemies
+        #if enemies dead:
+            #return
+
+#create function home, get scrn, difficulties
+    #loop:
+        #if room number is 4:
+            #loop:
+                #place avaliable difficulty options on screen
+                #if difficulty clicked: return difficulty level
+        #show room background on scrn
+        #show HUD using function
+        #if room is first:
+            #show upgrades npc on scrn
+        #elif room 2: #show weapons npc on scrn
+        #elif room 3: #show tutorial npc on scrn
+        #if user interacts with room npc:
+            #run that npc's speak function
+        #if user in exit:
+            #change room number
+            #next loop iteration
+        #if user in entrance and room not 1
+            #change room number
+            #next loop iteration
