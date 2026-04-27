@@ -11,3 +11,6 @@
 
 #Define collsion function
     #When a player and enemy collide, they will deal small damage to eachother, and deal more knockback to eachother, with the player getting i-frames
+    #Using the sprite collide function in pygame, the game will always be checking if the player and any of the enemies are colliding
+    #When they do collide it will check which enemy collided and then do the damage, and the knockback, unless the player has i-frames
+    #Will do the same thing with things like bullets and weapons
