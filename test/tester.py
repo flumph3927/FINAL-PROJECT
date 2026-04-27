@@ -55,7 +55,7 @@ class Player(pygame.sprite.Sprite):
             self.weapon_surf_original.fill((255, 0, 0))
             
         self.speed, self.floor_y, self.y_velocity = 5, 460, 0
-        self.gravity, self.jump_strength = 0.8, -12.5
+        self.gravity, self.jump_strength = 0.8, -16.5
         self.is_jumping = False
         self.is_attacking, self.attack_timer = False, 0
         self.weapon_rect = pygame.Rect(0, 0, 0, 0)
@@ -120,6 +120,7 @@ class Enemy(pygame.sprite.Sprite):
         try:
             img = pygame.image.load("images/spritesheet_2.png")
             self.image = pygame.transform.scale(img.subsurface((660, 190, 97, 83)), (30,30))
+         
         except:
             self.image = pygame.Surface((30, 30))
             self.image.fill((0, 255, 0))
@@ -173,6 +174,23 @@ def setup():
             if event.type == pygame.KEYDOWN:
                 if event.key in [pygame.K_UP, pygame.K_w, pygame.K_SPACE]:
                     player.jump()
+
+
+
+
+
+
+
+                if event.key in [pygame.K_m]:
+                    new_enemy = Enemy(random.randint(150, 650), random.randint(150, 450))
+                    enemies.add(new_enemy)
+                    all_sprites.add(new_enemy)
+
+
+
+
+
+
             
             if event.type == pygame.MOUSEBUTTONDOWN:
                 # Left Click (1): Melee Attack
@@ -181,6 +199,7 @@ def setup():
                 # Right Click (3): Shoot Bullet
                 if event.button == 3 and player.shoot_cooldown == 0:
                     mx, my = pygame.mouse.get_pos()
+                    player.attack()
                     new_bullet = Bullet(player.rect.centerx, player.rect.centery, mx, my, player.bullet_damage)
                     bullets.add(new_bullet)
                     all_sprites.add(new_bullet)
