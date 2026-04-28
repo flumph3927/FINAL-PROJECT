@@ -3,15 +3,11 @@ import math
 import random
 
 #  INITIAL SETUP 
-try:
-    num_enemies = int(input("How many enemies do you want to spawn? "))
-except ValueError:
-    num_enemies = 1
+num_enemies = 0
 
 pygame.init()
 screen = pygame.display.set_mode((800, 600))
 clock = pygame.time.Clock()
-
 #  CLASSES 
 
 class Bullet(pygame.sprite.Sprite):
@@ -56,17 +52,17 @@ class Player(pygame.sprite.Sprite):
 
         # Ranged (Gun from your image)
         try:
-            # Assumes your new image is saved as 'gun_sprite.png' in the main folder
-            gun_sheet = pygame.image.load("gun_sprite.png").convert_alpha()
+            gun_sheet = pygame.image.load("images/gun_sprite.png").convert_alpha()
             # Coordinates tuned for the gun in the image you sent
-            self.gun_surf = pygame.transform.scale(gun_sheet.subsurface((30, 10, 60, 30)), (40, 40))
+            self.gun_surf = pygame.transform.scale(gun_sheet.subsurface((37, 14, 12, 25)), (40, 40))
+            self.gun_surf = pygame.transform.rotate(self.gun_surf, -25)
         except:
             self.gun_surf = pygame.Surface((32, 16)); self.gun_surf.fill((100, 100, 100))
 
         # Stats
         self.speed, self.floor_y, self.y_velocity = 5, 460, 0
         self.gravity, self.jump_strength = 0.8, -16.5
-        self.health = 10.0
+        self.health = 5.0
         self.iframes = 0
         self.is_jumping = False
         self.is_attacking, self.attack_timer = False, 0
@@ -128,7 +124,16 @@ class Player(pygame.sprite.Sprite):
             dist = 35
             w_rect.centerx += math.cos(math.radians(-angle)) * dist
             w_rect.centery += math.sin(math.radians(-angle)) * dist
-            
+
+
+            if math.cos(math.radians(-angle)) * dist > 0:
+                w_rect.centerx -= 20
+            elif math.cos(math.radians(-angle)) * dist < 0:
+                w_rect.centerx += 20
+
+            if math.sin(math.radians(-angle)) * dist > 0:
+                w_rect.centery -= 5
+
             surface.blit(rotated_w, w_rect)
             return w_rect
         return None
@@ -190,7 +195,7 @@ def setup():
             if event.type == pygame.QUIT: running = False
             
             if event.type == pygame.KEYDOWN:
-                # Restored: Spawn enemy with M
+                # Spawn enemy with M
                 if event.key == pygame.K_m:
                     enemies.add(Enemy(random.randint(150, 650), random.randint(150, 450)))
                 
@@ -217,6 +222,7 @@ def setup():
             hits = pygame.sprite.spritecollide(player, enemy_bullets, True)
             for hit in hits:
                 player.health -= 0.5; player.iframes = 25
+                
 
         # Rendering
         screen.fill((255, 255, 255))
@@ -229,10 +235,19 @@ def setup():
         # Collision: Player attacking Enemies
         for enemy in list(enemies):
             if weapon_hitbox and weapon_hitbox.colliderect(enemy.rect) and enemy.hit_cooldown == 0:
-                enemy.health -= 2; enemy.hit_cooldown = 20
+                enemy.health -= 1; enemy.hit_cooldown = 20
             
             bullet_hits = pygame.sprite.spritecollide(enemy, player_bullets, True)
-            for b in bullet_hits: enemy.health -= 1
+            for b in bullet_hits: enemy.health -= 0.5
+
+            collision = pygame.sprite.spritecollide(player,enemies, False)
+            if collision and player.iframes == 0:
+                player.health -= 1
+                player.iframes = 25
+                
+                for enemy in collision:
+                    enemy.health -= 0.5
+
 
             if enemy.health <= 0: enemy.kill()
             else:
