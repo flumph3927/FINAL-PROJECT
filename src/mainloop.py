@@ -2,6 +2,14 @@
 
 # basically import everything
 
+import pygame
+from data_managment import *
+from helpers import *
+from home_base import *
+from menus import *
+from miscellaneous import *
+from sprite_creation_and_management import *
+
 # def main_loop():
     # initialize pygame
     # start actual loop
@@ -21,3 +29,15 @@
 
             # if save and quit is run from home base, just save and quit
             # if save and quit is run from run main_loop, warn user that their run progress is not saved, and allow user to choose whether to leave or not (if in the middle of combat, do not allow to quit)
+
+
+def main_loop():
+    pygame.init()
+
+    # create screen, setup all basic surfaces and other stuff
+    screen = "placeholder"
+
+    main_menu(screen)
+
+
+
