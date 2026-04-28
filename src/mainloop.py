@@ -3,12 +3,12 @@
 # basically import everything
 
 import pygame
-from data_managment import *
+from data_management import *
 from helpers import *
 from home_base import *
 from menus import *
 from miscellaneous import *
-from sprite_creation_and_management import *
+from sprite_creation_and_managment import *
 
 # def main_loop():
     # initialize pygame
@@ -35,9 +35,29 @@ def main_loop():
     pygame.init()
 
     # create screen, setup all basic surfaces and other stuff
-    screen = "placeholder"
+    screen = pygame.Surface((1000,1000))
+    
+    while True:
+        screen.fill((255,255,255))
+        main_action = main_menu(screen)
 
-    main_menu(screen)
+        if main_action == "Quit":
+            break
+
+        if main_action == "Demo":
+            pass
+
+        if main_action == "One":
+            # load user data from save file one
+            pass
+
+        if main_action == "Two":
+            # load user data from save file two
+            pass
+
+        if main_action == "Three":
+            # load user data from save file three
+            pass
 
 
 

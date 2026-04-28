@@ -7,7 +7,7 @@ import pygame
 class Button:
     def __init__(self,width,height,color,hover_color,text,x,y):
         self.color = color
-        self.hover_color = color
+        self.hover_color = hover_color
         self.text = text
         # rectangle needed for collision detection
         self.rect = pygame.Rect(x,y,width,height)
@@ -35,8 +35,16 @@ class Button:
 def main_menu(screen):
 
     current_screen = screen
+    bg_image = pygame.image.load("placeholder").convert
+    bg_image = pygame.transform.scale(bg_image, (1000, 1000))
+
+
     while True:
-        quit_button = Button(100,400, "Quit Game") # still need to figure out what the x and y will be, as well as the color
+        current_screen.fill((255,255,255))
+        screen.blit(bg_image, (0,0))
+
+        
+        quit_button = Button(100,400, "Quit Game") # still need to figure out what the x and y will be, as well as the colors
         demo_button = Button(100,400,"Try Demo")
         load_button = Button(100,400,"Load/Create Game")
 
