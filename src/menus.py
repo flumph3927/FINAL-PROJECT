@@ -32,6 +32,39 @@ class Button:
 
 # basic skeleton for main menu, still need to make
 
+def loadgame_menu(screen):
+    current_screen = screen
+    while True:
+        # clear other buttons
+        current_screen.fill((255,255,255))
+        return_button = Button(400,100,(255,0,0),(0,255,0),"Return to Main Menu",400,700)
+        save_one = Button(400,100,(255,0,0),(0,255,0),"Load Save File One",400,100)
+        save_two = Button(400,100,(255,0,0),(0,255,0),"Load Save File Two",400,300)
+        save_three = Button(400,100,(255,0,0),(0,255,0),"Load Save File Three",400,500)
+
+        return_button.draw(current_screen)
+        save_one.draw(current_screen)
+        save_two.draw(current_screen)
+        save_three.draw(current_screen)
+        for event in pygame.event.get():
+            return_clicked = return_button.is_clicked(event)
+            if return_clicked:
+                return "Main"
+
+            one_clicked = save_one.is_clicked(event)
+            if one_clicked:
+                return "One"
+
+            two_clicked = save_two.is_clicked(event)
+            if two_clicked:
+                return "Two"
+
+            three_clicked = save_three.is_clicked(event)
+            if three_clicked:
+                return "Three"
+            
+            pygame.display.flip()
+
 def main_menu():
     pygame.init()
     current_screen = pygame.display.set_mode((1000,1000))
@@ -62,36 +95,11 @@ def main_menu():
                 pass
             load_clicked = load_button.is_clicked(event)
             if load_clicked:
-                while True:
-                    # clear other buttons
-                    current_screen.fill((255,255,255))
-                    return_button = Button(400,100,(255,0,0),(0,255,0),"Return to Main Menu",400,700)
-                    save_one = Button(400,100,(255,0,0),(0,255,0),"Load Save File One",400,100)
-                    save_two = Button(400,100,(255,0,0),(0,255,0),"Load Save File Two",400,300)
-                    save_three = Button(400,100,(255,0,0),(0,255,0),"Load Save File Three",400,500)
-
-                    return_button.draw(current_screen)
-                    save_one.draw(current_screen)
-                    save_two.draw(current_screen)
-                    save_three.draw(current_screen)
-
-                    return_clicked = return_button.is_clicked(event)
-                    if return_clicked:
-                        break
-
-                    one_clicked = save_one.is_clicked(event)
-                    if one_clicked:
-                        return 2,"One"
-
-                    two_clicked = save_two.is_clicked(event)
-                    if two_clicked:
-                        return 2,"Two"
-
-                    three_clicked = save_three.is_clicked(event)
-                    if three_clicked:
-                        return 2,"Three"
-                    
-                    pygame.display.flip()
+                file_choice = loadgame_menu(current_screen)
+                if file_choice != "Main":
+                    return 2,file_choice
+                else:
+                     pass
                     
         
         pygame.display.flip()
