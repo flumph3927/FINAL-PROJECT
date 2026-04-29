@@ -39,25 +39,23 @@ def main_loop():
     
     while True:
         screen.fill((255,255,255))
-        main_action = main_menu(screen)
+        type, main_action = main_menu(screen)
 
-        if main_action == "Quit":
-            break
+        if type == 1:
+            if main_action == "Quit":
+                break
 
-        if main_action == "Demo":
-            pass
+            elif main_action == "Demo":
+                pass
+        else:
+            if main_action == "One":
+                user_data = load_game("documents\\savefile_one.csv")
 
-        if main_action == "One":
-            # load user data from save file one
-            pass
+            elif main_action == "Two":
+                user_data = load_game("documents\\savefile_two.csv")
 
-        if main_action == "Two":
-            # load user data from save file two
-            pass
-
-        if main_action == "Three":
-            # load user data from save file three
-            pass
+            else:
+                user_data = load_game("documents\\savefile_three.csv")
 
 
 
