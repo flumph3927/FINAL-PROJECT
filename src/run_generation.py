@@ -5,6 +5,7 @@
 # import all neccesary sprites
 
 from room_classes import *
+from sprite_creation_and_managment import *
 
 # def generate_room(room_count):
     # check if room count is 4 or 5
@@ -26,7 +27,7 @@ from room_classes import *
     # basically just start a loop and keep track of room count, check user health each iteration
     # if user dies, kick back to home base main loop
 
-def generate_room(room_count):
+def generate_room(room_count,reward):
     if room_count == 5:
         pass
         # generate a shop room
@@ -34,6 +35,23 @@ def generate_room(room_count):
         pass
         # generate the boss room
     else:
+        room = CombatRoom(800,800,reward)
+        room.generate_platforms()
+        room.generate_enemies()
+        room.generate_rewards()
+        return room
+        
+
+def run_loop(current_player,screen):
+    room_count = 1
+    while True:
         if room_count == 1:
-            room = CombatRoom(800,800,"Upgrade")
-            room.generate_platforms()
+            room = generate_room(room_count,"Upgrade")
+
+        player = current_player
+
+        room.draw(screen)
+        setup() # instead of running generate room here, run it in the setup function
+
+
+
