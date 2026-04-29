@@ -4,6 +4,8 @@
 # from combat import *
 # import all neccesary sprites
 
+from room_classes import *
+
 # def generate_room(room_count):
     # check if room count is 4 or 5
     # if it is equal to 4, load a shop room
@@ -24,3 +26,14 @@
     # basically just start a loop and keep track of room count, check user health each iteration
     # if user dies, kick back to home base main loop
 
+def generate_room(room_count):
+    if room_count == 5:
+        pass
+        # generate a shop room
+    elif room_count == 6:
+        pass
+        # generate the boss room
+    else:
+        if room_count == 1:
+            room = CombatRoom(800,800,"Upgrade")
+            room.generate_platforms()

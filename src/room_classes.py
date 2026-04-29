@@ -3,7 +3,7 @@
 # from combat import *
 # import all neccesary sprites
 import random
-
+import pygame
 # class Reward
 
 # class CombatRoom:
@@ -105,8 +105,20 @@ class Platform:
 
     def draw(self,screen):
         sprite = pygame.image.load("Platform place holder").convert_alpha()
-        sprite_rect = sprite_image.get_rect(top_left=(self.x,self.y))
+        sprite_rect = sprite.image.get_rect(top_left=(self.x,self.y))
         screen.blit(sprite,sprite_rect)
+
+class Reward:
+    def __init__(self,type,x,y):
+        self.type = type
+        self.rect = pygame.Rect(50,50,x,y)
+
+    def interact(self,player):
+        
+
+    def draw(self,screen):
+        pass
+
 
 class CombatRoom:
     def __init__(self,width,height,reward):
@@ -146,14 +158,14 @@ class CombatRoom:
         mid_1 = mid_platforms(mid)
         high_1,high_2 = high_platforms(high)
 
-        return low_1,low_2,mid_1,high_1,high_2
+        self.platforms.append(low_1,low_2,mid_1,high_1,high_2)
 
     # need to figure out most of this
     def generate_enemies(self):
         enemy_types = ["Grunt","Ranger","Drone"]
         enemies = []
 
-        for i in range(1,5):
+        for _ in range(1,5):
             enemy_type = random.choice(enemy_types)
             enemy = None
             # create enemy from enemy class
@@ -163,7 +175,7 @@ class CombatRoom:
     
     def generate_rewards(self,rooms):
         # probably gonna want to add more reward types
-        reward_choices = ["Health","Upgrade","Currency"]
+        reward_choices = ["Health","Upgrade","Run Currency", "Meta Currency"]
         rewards = []
         for i in range(rooms):
             rewards.append(random.choice(reward_choices))
@@ -187,3 +199,7 @@ class CombatRoom:
         for i in self.enemies:
             pass
             # ask Ryan how enemies are spawned
+
+        if bool(self.enemies) == False:
+            pass
+            # figure out how to spawn reward

@@ -1,1 +1,2 @@
-# fieldnames to be put here
+health_mod,damage_mod,i_frame_mod,weapons,upgrades
+1.0,1.0,1.0,Gauntlet|Rifle,1|2|3|4|6
