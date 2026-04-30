@@ -48,10 +48,13 @@ def run_loop(current_player,screen):
         if room_count == 1:
             room = generate_room(room_count,"Upgrade")
 
-        player = current_player
+            player = current_player
 
-        room.draw(screen)
-        setup() # instead of running generate room here, run it in the setup function
+            room.draw(screen)
+            setup() # instead of running generate room here, run it in the setup function
 
+        else:
+            
+            
 
 
