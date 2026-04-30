@@ -2,6 +2,33 @@ import pygame
 import math
 import random
 
+def knockbackfunc(s1,s2):
+    point = pygame.Rect(0,600,1,1)
+    pointvec = pygame.math.Vector2(point.center)
+    s1vec = pygame.math.Vector2(s1.rect.center)
+    s2vec = pygame.math.Vector2(s2.rect.center)
+    d1 = pointvec.distance_to(s1vec)
+    d2 = pointvec.distance_to(s2vec)
+    counter = 0
+    if d1<d2:
+        while counter < 15 and s1.rect.x >110:
+            s1.rect.x -=10
+            counter += 1
+        counter = 0
+        while counter < 15 and s2.rect.x >890:
+            s2.rect.x +=10
+            counter += 1
+    elif d2<d1:
+        while counter < 15 and s2.rect.x >110:
+            s2.rect.x -=10
+            counter += 1
+        counter = 0
+        while counter < 15 and s1.rect.x >890:
+            s1.rect.x +=10
+            counter += 1
+
+
+
 #  INITIAL SETUP 
 num_enemies = 0
 
@@ -222,6 +249,7 @@ def setup():
             hits = pygame.sprite.spritecollide(player, enemy_bullets, True)
             for hit in hits:
                 player.health -= 0.5; player.iframes = 25
+
                 
 
         # Rendering
@@ -236,6 +264,8 @@ def setup():
         for enemy in list(enemies):
             if weapon_hitbox and weapon_hitbox.colliderect(enemy.rect) and enemy.hit_cooldown == 0:
                 enemy.health -= 1; enemy.hit_cooldown = 20
+                knockbackfunc(enemy,player)
+
             
             bullet_hits = pygame.sprite.spritecollide(enemy, player_bullets, True)
             for b in bullet_hits: enemy.health -= 0.5
