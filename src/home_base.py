@@ -1,6 +1,6 @@
 #All home base items, NPC classes, 
 
-import pygame
+import pygame, miscellaneous
 
 #create class NPC
 class NPC:
@@ -41,12 +41,30 @@ class NPC:
 
 
 #create class WeaponNPC, subclass of NPC
-    #create function speak, get screen, weapons
+class WeaponNPC(NPC):
+    #create function speak, get screen
+    def speak(self,scrn,selected):
+        weapons=pygame.image.load('images/weapon.png').convert_alpha()
+        gaunt=miscellaneous.Button(60,60,pygame.transform.scale(weapons.subsurface((80, 180, 100, 100)),(60,60)),1,'GAUNTLET',300,700)
+        gun=miscellaneous.Button(60,60,pygame.transform.scale(weapons.subsurface((475, 180, 100, 100)),(60,60)),2,'M1 GARAND',300,700)
         #loop
+        while True:
             #place all weapons on screen as name and image
+            gaunt.draw(scrn)
+            gun.draw(scrn)
             #place selected weapon: selected weapon on top of screen
+            if selected==1:
+                shown=pygame.transform.scale(weapons.subsurface((80, 180, 100, 100)),(60,60))
+            else: shown=pygame.transform.scale(weapons.subsurface((475, 180, 100, 100)),(60,60))
+            scrn.blit(shown,(470,400))
             #place esc to exit in corner of screen
+            font=pygame.font.SysFont('',60)
+            text=font.render('ESC TO EXIT', True, (255, 255, 255))
+            scrn.blit(text,(50,50))
+            pygame.screen.flip()
             #if weapon clicked
+            for event in pygame.event.get:
+                if gaunt.is_clicked(event):
                 #loop
                     #draw weapon clicked big with description added and an esc to exit on screen
                     #if user has enough currency, place enter to select box on screen
