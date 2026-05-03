@@ -1,11 +1,22 @@
 #All home base items, NPC classes, 
 
+import pygame
+
 #create class NPC
+class NPC:
     #create function initialize, get name, img
+    def __init__(self,name,img):
         #set variables to class variables, but inversed that
+        self.name=name
+        self.img=img
 
     #create function show, get screen
+    def show(self,scrn,coords):
         #place img on screen with button to speak message below it and name above it on screen
+        scrn.blit(self.img,coords)
+        font=pygame.font.SysFont('',60)
+        text=font.render(self.name, True, (255, 255, 255))
+        scrn.blit(text,(coords[0],coords[1]-40))
 
 
 #create class UpgradeNPC, subclass of NPC
