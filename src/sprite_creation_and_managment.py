@@ -538,6 +538,7 @@ def setup():
         for enemy in list(enemies):
             if weapon_hitbox and weapon_hitbox.colliderect(enemy.rect) and enemy.hit_cooldown == 0:
                 enemy.health -= 1; enemy.hit_cooldown = 20
+                knockbackfunc(enemy,None,player)
             
             bullet_hits = pygame.sprite.spritecollide(enemy, player_bullets, True)
             for b in bullet_hits: enemy.health -= 0.5
@@ -549,6 +550,7 @@ def setup():
                 
                 for enemy in collision:
                     enemy.health -= 0.5
+                    knockbackfunc(enemy,player,player)
 
 
             if enemy.health <= 0: enemy.kill()
