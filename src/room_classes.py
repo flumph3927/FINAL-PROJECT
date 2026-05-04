@@ -4,6 +4,7 @@
 # import all neccesary sprites
 import random
 import pygame
+from sprite_creation_and_managment import *
 # class Reward
 
 # class CombatRoom:
@@ -121,7 +122,7 @@ class Reward:
 
 
 class CombatRoom:
-    def __init__(self,width,height,reward,next_rewards):
+    def __init__(self,width,height,reward):
         self.width = width
         self.height = height
         self.reward = reward
@@ -163,13 +164,10 @@ class CombatRoom:
 
     # need to figure out most of this
     def generate_enemies(self):
-        enemy_types = ["Grunt","Ranger","Drone"]
         enemies = []
 
         for _ in range(1,5):
-            enemy_type = random.choice(enemy_types)
-            enemy = None
-            # create enemy from enemy class
+            enemy = Enemy(random.randint(200,400),random.randint(200,400))
             enemies.append(enemy)
 
         return enemies
@@ -190,7 +188,7 @@ class CombatRoom:
 
     def draw(self,background,screen,low,mid,high):
         bg_image = pygame.image.load(background).convert_alpha()
-        bg_image = pygame.transform.scale(bg_image,(1000,1000))
+        bg_image = pygame.transform.scale(bg_image,(800,800))
         screen.blit(bg_image)
         self.platforms = self.generate_platforms(low,mid,high)
         for i in self.platforms:
@@ -198,5 +196,5 @@ class CombatRoom:
 
         self.enemies = self.generate_enemies()
         for i in self.enemies:
-            pass
+            i.draw(screen)
             # ask Ryan how enemies are spawned
