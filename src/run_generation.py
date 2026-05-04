@@ -42,7 +42,7 @@ def generate_room(room_count,reward):
         room.generate_platforms()
         room.generate_enemies()
         room.generate_rewards()
-        return room
+        room.draw()
         
 
 def run_loop(current_player,screen):
@@ -62,7 +62,7 @@ def run_loop(current_player,screen):
 
             player = current_player
 
-            setup( )
+            setup()
             
 
 
