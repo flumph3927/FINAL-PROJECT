@@ -114,19 +114,20 @@ class Reward:
         self.rect = pygame.Rect(50,50,x,y)
 
     def interact(self,player):
-        
+        pass        
 
     def draw(self,screen):
         pass
 
 
 class CombatRoom:
-    def __init__(self,width,height,reward):
+    def __init__(self,width,height,reward,next_rewards):
         self.width = width
         self.height = height
         self.reward = reward
         self.enemies = []
         self.platforms = []
+        self.next_rewards = []
 
     # low, mid, and high are values for the required x value of that room's range of platforms.
     def generate_platforms(self,low,mid,high):
@@ -173,14 +174,14 @@ class CombatRoom:
 
         return enemies
     
-    def generate_rewards(self,rooms):
+    def generate_rewards(self):
         # probably gonna want to add more reward types
         reward_choices = ["Health","Upgrade","Run Currency", "Meta Currency"]
         rewards = []
-        for i in range(rooms):
+        for _ in range(2):
             rewards.append(random.choice(reward_choices))
 
-        return rewards
+        self.next_rewards = rewards
     
     # figure out what variables will be changed, how to make interactable rewards (make a reward class)
     def spawn_reward(self):
@@ -199,7 +200,3 @@ class CombatRoom:
         for i in self.enemies:
             pass
             # ask Ryan how enemies are spawned
-
-        if bool(self.enemies) == False:
-            pass
-            # figure out how to spawn reward
