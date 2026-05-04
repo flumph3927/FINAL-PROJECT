@@ -1,6 +1,6 @@
 #All home base items, NPC classes, 
 
-import pygame, miscellaneous
+import pygame, miscellaneous, helpers
 
 #create class NPC
 class NPC:
@@ -146,8 +146,14 @@ def home(scrn,diffs):
             #loop:
             while True:
                 #place avaliable difficulty options on screen
-                font=pygame.font.SysFont('',60)
-                #if difficulty clicked: return difficulty level
+                if diffs==True:
+                    hard=helpers.Button(200,100,(100,100,100),(150,150,150),'HARDMODE',200,400)
+                    easy=helpers.Button(200,100,(100,100,100),(150,150,150),'NORMAL',600,400)
+                    #if difficulty clicked: return difficulty level
+                    for event in pygame.event.get():
+                        if hard.is_pressed(event): return True
+                        elif easy.is_pressed(event): return False
+                else: return False
         #show room background on scrn
         #show HUD using function
         #if room is first:
