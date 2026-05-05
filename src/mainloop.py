@@ -8,7 +8,7 @@ from helpers import *
 from home_base import *
 from menus import *
 from miscellaneous import *
-from sprite_creation_and_managment import *
+from sprite_manage import *
 
 # def main_loop():
     # initialize pygame
@@ -57,5 +57,6 @@ def main_loop():
             else:
                 user_data = load_game("documents\\savefile_three.csv")
 
+main_loop()
 
 
