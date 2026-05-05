@@ -252,20 +252,23 @@ def setup():
         enemies.update(player, enemy_bullets)
         player_bullets.update()
         enemy_bullets.update()
+        
 
         # Bullet Collision (Enemy hits player)
         if player.iframes == 0 and player.health > 0:
             hits = pygame.sprite.spritecollide(player, enemy_bullets, True)
             for hit in hits:
                 player.health -= 0.5; player.iframes = 25
-
-                
+        boss_sheet = pygame.image.load("images/boss-sheet.png").convert_alpha()
+        sprite = (40,30,20,20)
+        boss_drop = boss_sheet.subsurface(sprite)
+        boss_drop = pygame.transform.scale(boss_drop,(100,100))
 
         # Rendering
         screen.fill((255, 255, 255))
         for wall in [(0,0,800,100), (0,500,800,100), (0,0,100,600), (700,0,100,600)]:
             pygame.draw.rect(screen, (0,0,0), wall)
-        
+        screen.blit(boss_drop, (400,400))
         player.draw(screen)
         weapon_hitbox = player.draw_active_weapon(screen)
         
