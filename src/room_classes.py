@@ -4,7 +4,7 @@
 # import all neccesary sprites
 import random
 import pygame
-from sprite_manage import *
+from sprite_creation_and_managment import *
 # class Reward
 
 # class CombatRoom:
@@ -43,12 +43,19 @@ from sprite_manage import *
     # load_art():
         # load background art and set up basic collision
 
-# class BossRoom(CombatRoom):
-    # def __init__():
+class BossRoom(CombatRoom):
+    def __init__():
         # basic attributes will be #platforms and art
+        self.image = pygame.image.load("images/BossRoom.png")
 
-    # def boss_reward():
+    def boss_reward():
         # override preset reward and genreate boss-specific reward (something special needed for certain upgrades)
+        boss_sheet = pygame.image.load("images/boss-sheet.png").convert_alpha()
+        sprite = (40,30,20,20)
+        boss_drop = boss_sheet.subsurface(sprite)
+        boss_drop = pygame.transform.scale(boss_drop,(100,100))
+        screen.blit(boss_drop, (400,400))
+
 
 # class Shop:
     # def __init__():
@@ -116,7 +123,7 @@ class Platform:
         self.y = y
 
     def draw(self,screen):
-        sprite = pygame.image.load("images\\Platform.png").convert_alpha()
+        sprite = pygame.image.load("Platform place holder").convert_alpha()
         sprite_rect = sprite.image.get_rect(top_left=(self.x,self.y))
         screen.blit(sprite,sprite_rect)
 
