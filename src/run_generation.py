@@ -30,8 +30,11 @@ from sprite_creation_and_managment import *
 def generate_room(room_count,reward):
     if room_count == 5:
         pass
-        # generate a shop room
+        # generate healing room
     elif room_count == 6:
+        pass
+        # generate a shop room
+    elif room_count == 7:
         pass
         # generate the boss room
     else:
@@ -39,19 +42,27 @@ def generate_room(room_count,reward):
         room.generate_platforms()
         room.generate_enemies()
         room.generate_rewards()
-        return room
+        room.draw()
         
 
 def run_loop(current_player,screen):
     room_count = 1
+    reward_types = ["Upgrade","Meta Currency",'In Run Currency']
     while True:
         if room_count == 1:
             room = generate_room(room_count,"Upgrade")
 
-        player = current_player
+            player = current_player
 
-        room.draw(screen)
-        setup() # instead of running generate room here, run it in the setup function
+            room.draw(screen)
+            setup() # instead of running generate room here, run it in the setup function
 
+        else:
+            room = generate_room(room_count,random.choice(reward_types))
+
+            player = current_player
+
+            setup()
+            
 
 

@@ -1,7 +1,7 @@
 #Psuedocode for HUD function, pause function, in-run upgrades, and room rewards function
 #Levi
 
-import pygame,random, menus
+import pygame,random, helpers
 
 #create function show_hud, get screen, health, weapon, upgrades, ultimate, and in-run currency amount
 def show_hud(scrn,hp,wpn,upgrade,ult,money):
@@ -43,9 +43,9 @@ def pause(scrn):
     text=font.render('PAUSED', True, (0,255,0))
     scrn.blit(text,(220,100))
     #place save and exit button on screen
-    save=menus.Button(200,100,(100,100,100),(50,50,50),'Save and Exit',400,700)
+    save=helpers.Button(200,100,(100,100,100),(50,50,50),'Save and Exit',400,700)
     #place resume button on screen
-    resume=menus.Button(200,100,(100,100,100),(50,50,50),'Resume',400,300)
+    resume=helpers.Button(200,100,(100,100,100),(50,50,50),'Resume',400,300)
     #loop:
     while True:
         save.draw(scrn)
@@ -58,7 +58,7 @@ def pause(scrn):
             if resume.is_clicked(event): return False
 
 #adapted class button to check which upgrades clicked
-class Button(menus.Button):
+class Button(helpers.Button):
     def draw(self,screen):
         #by color i mean image
         screen.blit(self.color,self.rect)

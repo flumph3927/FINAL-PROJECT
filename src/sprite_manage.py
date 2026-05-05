@@ -2,6 +2,7 @@ import pygame
 import math
 import random
 from knockback import knockbackfunc
+from miscellaneous import *
 #  INITIAL SETUP 
 num_enemies = 0
 
@@ -69,6 +70,7 @@ class Player(pygame.sprite.Sprite):
         self.is_shooting, self.shoot_timer = False, 0
         self.shoot_cooldown = 0
         self.weapon = 1
+        self.charge = 0
 
     def jump(self):
         if not self.is_jumping:
@@ -208,11 +210,18 @@ def setup():
     player_bullets = pygame.sprite.Group()
     enemy_bullets = pygame.sprite.Group()
 
+    
+
     for i in range(num_enemies):
         enemies.add(Enemy(random.randint(150, 650), random.randint(150, 450)))
 
     running = True
     while running:
+        
+        screen.fill((0,0,0))
+        pygame.draw.rect(screen,(255,255,255),(100,100,800,800))
+        show_hud(screen,player.health,player.weapon, 0, player.charge)
+        
         for event in pygame.event.get():
             if event.type == pygame.QUIT: running = False
             
@@ -253,18 +262,6 @@ def setup():
             for hit in hits:
                 player.health -= 0.5; player.iframes = 25
                 
-
-        # Rendering
-        screen.fill((255, 255, 255))
-        black = (0,0,0)
-        
-        player.draw(screen)
-
-
-
-        #Get this later
-        border_rect = pygame.Rect(95, 95, 805, 805)
-        pygame.draw.rect(screen, black, border_rect, 1)
         weapon_hitbox = player.draw_active_weapon(screen)
 
 
@@ -289,7 +286,10 @@ def setup():
                     enemy.health -= 0.5
 
 
-            if enemy.health <= 0: enemy.kill()
+            if enemy.health <= 0: 
+                enemy.kill()
+                if player.charge <= 3:
+                    player.charge += 1
             else:
                 screen.blit(enemy.image, enemy.rect)
                 enemy.draw_health_bar(screen)
