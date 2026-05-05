@@ -44,7 +44,7 @@ class NPC:
 class WeaponNPC(NPC):
 
     #create function speak, get screen
-    def speak(self,scrn,selected):
+    def speak(self,scrn,selected,upss):
         weapons=pygame.image.load('images/weapon.png').convert_alpha()
         gaunt=miscellaneous.Button(60,60,pygame.transform.scale(weapons.subsurface((80, 180, 100, 100)),(60,60)),1,'GAUNTLET',300,700)
         gun=miscellaneous.Button(60,60,pygame.transform.scale(weapons.subsurface((475, 180, 100, 100)),(60,60)),2,'M1 GARAND',640,700)
@@ -103,28 +103,32 @@ class WeaponNPC(NPC):
                                 if event.key==pygame.K_ESCAPE:
                                     #break out of loop
                                     slcted=False
+                                    continue
                 if event.type==pygame.KEYDOWN:
                     #if esc clicked
                     if event.key==pygame.K_ESCAPE:
                         #break out of loop
                         loop=False
         scrn.fill((0,0,0))
-        return wpn
+        return upss,wpn
 
 
 #create class TutorialNPC, sublclass of NPC
 class TutorialNPC(NPC):
 
     #create function speak, get screen
-    def speak(scrn):
+    def speak(scrn,weapon,upss):
         #run function tutorial on screen
         tutorial(scrn)
-
+        return upss, weapon
+    
 
 #create function tutorial, get screen
 def tutorial(scrn):
+    instructions=['Enter to see next instructions','WASD or Arrow Keys to move','W, up arrow, or space to jump','Right click for primary attack','Left click for secondary attack','E to interact','Enter to begin combat tutorial']
     #draw background on screen
-    pass
+    bg=pygame.transform.scale(pygame.image.load('images/TutorialRoom.png').convert_alpha(),(1000,1000))
+    scrn.blit(bg,(0,0))
     #loop through instructions as instruction
         #display instruction on screen
         #until mouse clicked, loop
@@ -154,27 +158,51 @@ def home(scrn,diffs):
                         if hard.is_pressed(event): return True
                         elif easy.is_pressed(event): return False
                 else: return False
-        #show room background on scrn
+        #show room background on 
+        npc_images=pygame.image.load('images/NPC.png').convert_alpha()
         #show HUD using function
+        miscellaneous.show_hud(scrn,5,1,[],4,35223)  #NEED TO TAKE PLAYER INTO HOME FUNCTION AND PUT STUFF IN HERE
         #if room is first:
+        if room==1:
+            bg=pygame.transform.scale(pygame.image.load('images/MetaUpgradesRoom.png').convert_alpha(),(800,800))
+            scrn.blit(bg,(100,100))
             #show upgrades npc on scrn
+            #current=UpgradeNPC() # WE NEED TO ADD THE UPGRADE NPC
+            room+=1
+            continue
         #elif room 2: #show weapons npc on scrn
+        elif room==2:
+            bg=pygame.transform.scale(pygame.image.load('images/WeaponsRoom.png').convert_alpha(),(800,800))
+            scrn.blit(bg,(100,100))
+            current=WeaponNPC('WEAPONS (E)',pygame.transform.scale(npc_images.subsurface((50, 180,130,200)),(100,160))) #CHANGE IMAGE TO FIT
         #elif room 3: #show tutorial npc on scrn
-        #if user interacts with room npc:
-            #run that npc's speak function
-        #if user in exit:
-            #change room number
-            #next loop iteration
-        #if user in entrance and room not 1
-            #change room number
-            #next loop iteration
-'''
-pygame.init()
+        elif room==3:
+            bg=pygame.transform.scale(pygame.image.load('images/TutorialRoom.png').convert_alpha(),(800,800))
+            scrn.blit(bg,(100,100))
+            current=TutorialNPC('TUTORIAL (E)',pygame.transform.scale(npc_images.subsurface((15, 150, 100, 100)),(100,160))) #CHANGE IMAGE TO FIT
+        current.show(scrn,(300,678))
+        run=True
+        while run:
+            #player movement here
+            pygame.display.flip()
+            #if user interacts with room npc:
+            for event in pygame.event.get():
+                if event.type==pygame.KEYDOWN:
+                    if event.key==pygame.K_e:
+                        #run that npc's speak function
+                        upgrades,weapon= current.speak(scrn,1,[])   #CHANGE THE ONE HERE TO THE PLAYER's WEAPON AND UPGRADES   ALSO CHANGE THE THING IT IS SET TO
+                    elif event.key==pygame.K_RETURN:  #TEMPORARY
+                        run=False
+                        room+=1
+            #if user in exit:                   #NEED PLAYER TO DO PLAYER MOVEMENT TO CHECK
+                #change room number
+                #next loop iteration
+            #if user in entrance and room not 1
+                #change room number
+                #next loop iteration
+            
+
+'''pygame.init()
 screen = pygame.display.set_mode((1000,1000))
 clock = pygame.time.Clock()
-elements=pygame.image.load('images/NPC.png').convert_alpha()
-wnpc=WeaponNPC('bob',pygame.transform.scale(elements.subsurface((15, 150, 100, 100)),(60,60)))
-wnpc.show(screen,(100,100))
-print(wnpc.speak(screen,1))
-while True:
-    pygame.display.flip()'''
+home(screen,True)'''

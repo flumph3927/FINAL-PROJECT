@@ -28,9 +28,9 @@ def show_hud(scrn,hp,wpn,upgrade,ult,money):
     scrn.blit(text,(100,920))
     #place money in bottom right
     coin=pygame.transform.scale(elements.subsurface((337,110,100,100)),(60,60))
-    scrn.blit(coin,(500,20))
+    scrn.blit(coin,(500,920))
     text=font.render(str(money), True, (255, 255, 255))
-    scrn.blit(text,(560,30))
+    scrn.blit(text,(560,930))
     #place current in-run upgrades in right side of screen
     upgrades=(pygame.transform.scale(elements.subsurface((45,725,100,100)),(60,60)),pygame.transform.scale(elements.subsurface((180,725,100,100)),(60,60)),pygame.transform.scale(elements.subsurface((320,725,100,100)),(60,60)),pygame.transform.scale(elements.subsurface((465,720,100,100)),(60,60)),pygame.transform.scale(elements.subsurface((610,720,100,100)),(60,60)))
     for i in upgrade:
