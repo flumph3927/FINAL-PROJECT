@@ -4,7 +4,7 @@
 # import all neccesary sprites
 import random
 import pygame
-from sprite_creation_and_managment import *
+from sprite_manage import *
 # class Reward
 
 # class CombatRoom:
@@ -116,7 +116,7 @@ class Platform:
         self.y = y
 
     def draw(self,screen):
-        sprite = pygame.image.load("Platform place holder").convert_alpha()
+        sprite = pygame.image.load("images\\Platform.png").convert_alpha()
         sprite_rect = sprite.image.get_rect(top_left=(self.x,self.y))
         screen.blit(sprite,sprite_rect)
 

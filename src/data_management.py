@@ -13,7 +13,7 @@ import csv
 
 def load_game(file_path):
     with open(file_path,mode="r",newline="") as user_csv:
-        fieldnames = ["health_mod","damage_mod","i_frame_mod","weapons","upgrades"]
+        fieldnames = ["health_mod","damage_mod","i_frame_mod","weapons","upgrades","meta_currency"]
 
         reader = csv.DictReader(user_csv,fieldnames)
 
@@ -26,7 +26,7 @@ def load_game(file_path):
 
 def save_game(file_path,user_data):
     with open(file_path,mode="w",newline="") as user_csv:
-        fieldnames = ["health_mod","damage_mod","i_frame_mod","weapons","upgrades"] # figure this out later
+        fieldnames = ["health_mod","damage_mod","i_frame_mod","weapons","upgrades","meta_currency"] # figure this out later
 
         writer = csv.DictWriter(user_csv,fieldnames)
 
