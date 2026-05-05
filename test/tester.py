@@ -2,30 +2,39 @@ import pygame
 import math
 import random
 
-def knockbackfunc(s1,s2):
+def knockbackfunc(s1,s2,s3):
     point = pygame.Rect(0,600,1,1)
     pointvec = pygame.math.Vector2(point.center)
     s1vec = pygame.math.Vector2(s1.rect.center)
-    s2vec = pygame.math.Vector2(s2.rect.center)
+    try:
+        s2vec = pygame.math.Vector2(s2.rect.center)
+    except:
+        s2vec = None
+        s3vec = pygame.math.Vector2(s3.rect.center)
     d1 = pointvec.distance_to(s1vec)
-    d2 = pointvec.distance_to(s2vec)
+    try:
+        d2 = pointvec.distance_to(s2vec)
+    except:
+        d2 = pointvec.distance_to(s3vec)
     counter = 0
     if d1<d2:
-        while counter < 15 and s1.rect.x >110:
+        while counter < 5 and s1.rect.x >110:
             s1.rect.x -=10
             counter += 1
         counter = 0
-        while counter < 15 and s2.rect.x >890:
-            s2.rect.x +=10
-            counter += 1
+        if s2vec != None:
+            while counter < 5 and s2.rect.x <890:
+                s2.rect.x +=10
+                counter += 1
     elif d2<d1:
-        while counter < 15 and s2.rect.x >110:
-            s2.rect.x -=10
-            counter += 1
+        if s2vec  != None:
+            while counter < 5 and s2.rect.x >110:
+                    s2.rect.x -=10
+                    counter += 1
         counter = 0
-        while counter < 15 and s1.rect.x >890:
-            s1.rect.x +=10
-            counter += 1
+        while counter < 5 and s1.rect.x <890:
+                    s1.rect.x +=10
+                    counter += 1
 
 
 
@@ -264,7 +273,7 @@ def setup():
         for enemy in list(enemies):
             if weapon_hitbox and weapon_hitbox.colliderect(enemy.rect) and enemy.hit_cooldown == 0:
                 enemy.health -= 1; enemy.hit_cooldown = 20
-                knockbackfunc(enemy,player)
+                knockbackfunc(enemy,None,player)
 
             
             bullet_hits = pygame.sprite.spritecollide(enemy, player_bullets, True)
@@ -274,6 +283,7 @@ def setup():
             if collision and player.iframes == 0:
                 player.health -= 1
                 player.iframes = 25
+                knockbackfunc(enemy,player,None)
                 
                 for enemy in collision:
                     enemy.health -= 0.5

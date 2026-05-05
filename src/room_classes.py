@@ -62,11 +62,22 @@ from sprite_creation_and_managment import *
         # load background and npc sprite
         # load shop items and prices floating above them
 
-# class HealingRoom
-    # def __init__():
+class HealingRoom:
+    def __init__(self):
+        self.image = pygame.image.load("images/HealingRoom.png")
+        self.width, self.height = self.image.get_size()
+        self.table_trigger = pygame.Rect(70,110,20,20)
+        self.heal_used = False
+        
         # basic attributes are sprites, width, height, and heal_used
 
-    # def heal():
+    def heal(self,player):
+        if player.rect.colliderect(self.table_trigger) == True and self.heal_used == False:
+            self.heal_used = True
+            healing = random.randint(1,2.5)
+            player.health += healing
+            if player.health > player.max_health:
+                player.health = player.max_health
         # triggered when user uses the heal thing and heal_used is false
         # generate a random number between 1 and 2.5, add that many hearts
         # set heal_used to true
