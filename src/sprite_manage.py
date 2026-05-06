@@ -42,7 +42,7 @@ class Player(pygame.sprite.Sprite):
             self.image_original = pygame.Surface((25, 40)); self.image_original.fill((0, 0, 255))
         
         self.image = self.image_original.copy()
-        self.rect = self.image.get_rect(center=(400, 350))
+        self.rect = self.image.get_rect(center=(150, 850))
         
         #  WEAPON LOADING 
         # Melee (Gauntlet)
@@ -156,12 +156,23 @@ class Player(pygame.sprite.Sprite):
 class Enemy(pygame.sprite.Sprite):
     def __init__(self, x, y, enemy_type='drone'):
         super().__init__()
-        try:
-            img = pygame.image.load("images/spritesheet_2.png")
-            self.image = pygame.transform.scale(img.subsurface((660, 190, 97, 83)), (30,30))
-        except:
-            self.image = pygame.Surface((30, 30))
-            self.image.fill((0, 255, 0))
+
+
+
+
+        if enemy_type=='drone':
+            try:
+                img = pygame.image.load("images/spritesheet_2.png")
+                self.image = pygame.transform.scale(img.subsurface((660, 190, 97, 83)), (30,30))
+            except:
+                self.image = pygame.Surface((30, 30))
+                self.image.fill((0, 255, 0))
+        if enemy_type == 'melee':
+            img = pygame.image.load("image/spritesheet_2.png")
+            self.image = pygame.transform.scale(img.subsurface((60, 190, 97, 130)), (30,30))
+
+
+
         self.rect = self.image.get_rect(topleft=(x, y))
         self.speed, self.health = 2, 5
         self.hit_cooldown, self.attack_cooldown = 0, 0
@@ -204,20 +215,22 @@ class Enemy(pygame.sprite.Sprite):
         if self.health > 0:
             pygame.draw.rect(surf, (0, 255, 0), (self.rect.x, self.rect.y - 10, (self.health / self.max_health) * 30, 5))
 
+
 class MeleeEnemy(pygame.sprite.Sprite):
     def __init__(self, x, y):
         super().__init__()
-        try:
-            img = pygame.image.load("images/spritesheet_2.png")
-            self.image = pygame.transform.scale(img.subsurface((660, 190, 97, 83)), (30,30))
-        except:
-            self.image = pygame.Surface((30, 30))
-            self.image.fill((255, 0, 255))
+        img = pygame.image.load("images/spritesheet_2.png")
+        self.image = pygame.transform.scale(img.subsurface((65, 150, 130, 170)), (30,40))
+    
         self.rect = self.image.get_rect(topleft=(x, y))
         self.speed = 3
         self.health = 3
         self.max_health = self.health
         self.hit_cooldown, self.attack_cooldown = 0, 0
+
+
+
+
 
     def update(self, target, enemy_bullets):
         if target.health <= 0:
@@ -244,12 +257,10 @@ class MeleeEnemy(pygame.sprite.Sprite):
 class RangerEnemy(pygame.sprite.Sprite):
     def __init__(self, x, y):
         super().__init__()
-        try:
-            img = pygame.image.load("images/spritesheet_2.png")
-            self.image = pygame.transform.scale(img.subsurface((660, 190, 97, 83)), (30,30))
-        except:
-            self.image = pygame.Surface((30, 30))
-            self.image.fill((255, 255, 0))
+ 
+        img = pygame.image.load("images/spritesheet_2.png")
+        self.image = pygame.transform.scale(img.subsurface((365, 150, 130, 170)), (30,40))
+       
         self.rect = self.image.get_rect(topleft=(x, y))
         self.speed = 3
         self.health = 4
@@ -441,3 +452,7 @@ def setup():
     pygame.quit()
 
 setup()
+
+
+
+#COLOR rgb(156, 90, 60)
