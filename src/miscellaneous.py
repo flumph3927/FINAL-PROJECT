@@ -68,8 +68,12 @@ class Button(helpers.Button):
 
 
 #create run upgrade function, get upgrades and screen
-def run_upgrade(upgrades,scrn):
+def run_upgrade(scrn,player):
+    upgrades=(pygame.transform.scale(elements.subsurface((45,725,100,100)),(60,60)),pygame.transform.scale(elements.subsurface((180,725,100,100)),(60,60)),pygame.transform.scale(elements.subsurface((320,725,100,100)),(60,60)),pygame.transform.scale(elements.subsurface((465,720,100,100)),(60,60)),pygame.transform.scale(elements.subsurface((610,720,100,100)),(60,60)))
     #choose three at random (weighted)
+    for i in player.upgrade:
+        if i in upgrades:
+            upgrades.remove(i)
     if upgrades==[]: return False
     if len(upgrades)<4:
         chosen=upgrades
@@ -94,8 +98,3 @@ def run_upgrade(upgrades,scrn):
         for event in pygame.event.get():
             for i in buttons:
                 if i.is_clicked(event): return i.hover_color
-
-#create rewards function, get screen, difficulty
-    #randomize rewards and scale with difficulty
-    #place reward amounts on screen
-    #return reward amounts

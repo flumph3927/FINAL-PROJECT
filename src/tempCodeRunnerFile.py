@@ -1,0 +1,1 @@
+npc_images=pygame.image.load('images/NPC.png').convert_alpha()
