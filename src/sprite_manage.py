@@ -251,14 +251,15 @@ class RangerEnemy(pygame.sprite.Sprite):
             self.image = pygame.Surface((30, 30))
             self.image.fill((255, 255, 0))
         self.rect = self.image.get_rect(topleft=(x, y))
-        self.speed = 1.5
+        self.speed = 3
         self.health = 4
         self.max_health = self.health
         self.state = 'attack'
-        self.move_left_bound = 100  # keep within map bounds
-        self.move_right_bound = 900
+        self.move_left_bound = 150  # keep within map bounds
+        self.move_right_bound = 850
         self.y = y  # fixed y position
         self.shoot_cooldown = 0
+        self.hit_cooldown = 0
 
     def update(self, target, enemy_bullets):
         self.rect.y = self.y
@@ -279,9 +280,9 @@ class RangerEnemy(pygame.sprite.Sprite):
         # If player is very close, dash away
         if dist_x < 200:
             if self.rect.centerx > self.move_left_bound:
-                self.rect.x += self.speed
-            elif self.rect.centerx < self.move_right_bound:
                 self.rect.x -= self.speed
+            elif self.rect.centerx < self.move_right_bound:
+                self.rect.x += self.speed
         else:
             # Follow boundaries
             if self.rect.centerx < self.move_left_bound:
@@ -316,7 +317,16 @@ def setup():
     enemy_bullets = pygame.sprite.Group()
 
     # List containing enemy types to spawn
-    enemy_type_list = ['drone', 'melee', 'ranger', 'drone', 'melee', 'ranger']
+    enemy_type_list = []
+    for i in range(5):
+        num = random.randint(1,3)
+        if num == 1:
+            enemy_type_list.append('drone')
+        if num == 2:
+            enemy_type_list.append('melee')
+        else:
+            enemy_type_list.append('ranger')
+    #enemy_type_list = ['drone', 'melee', 'ranger', 'drone', 'melee', 'ranger']
     # Count how many of each type
     drone_count = enemy_type_list.count('drone')
     melee_count = enemy_type_list.count('melee')
@@ -377,7 +387,7 @@ def setup():
                         player.is_attacking = True
                         player.attack_timer = 15
 
-        # Update logic
+        # Update logica
         player.update()
         enemies.update(player, enemy_bullets)
         player_bullets.update()
