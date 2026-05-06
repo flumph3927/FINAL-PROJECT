@@ -1,6 +1,6 @@
 #All home base items, NPC classes, 
 
-import pygame,time, miscellaneous, helpers
+import pygame,time,random, miscellaneous, helpers, sprite_manage
 
 #create class NPC
 class NPC:
@@ -117,7 +117,7 @@ class WeaponNPC(NPC):
 class TutorialNPC(NPC):
 
     #create function speak, get screen
-    def speak(scrn,weapon,upss):
+    def speak(self,scrn,weapon,upss):
         #run function tutorial on screen
         tutorial(scrn)
         return upss, weapon
@@ -141,7 +141,7 @@ def tutorial(scrn):
             #return
 
 #create function home, get scrn, difficulties
-def home(scrn,diffs):
+def home(scrn,diffs,player):
     #loop:
     room=1
     while True:
@@ -161,11 +161,9 @@ def home(scrn,diffs):
         #show room background on 
         npc_images=pygame.image.load('images/NPC.png').convert_alpha()
         #show HUD using function
-        miscellaneous.show_hud(scrn,5,1,[],4,523)  #NEED TO TAKE PLAYER INTO HOME FUNCTION AND PUT STUFF IN HERE
         #if room is first:
         if room==1:
             bg=pygame.transform.scale(pygame.image.load('images/MetaUpgradesRoom.png').convert_alpha(),(800,800))
-            scrn.blit(bg,(100,100))
             #show upgrades npc on scrn
             #current=UpgradeNPC() # WE NEED TO ADD THE UPGRADE NPC
             room+=1
@@ -173,36 +171,58 @@ def home(scrn,diffs):
         #elif room 2: #show weapons npc on scrn
         elif room==2:
             bg=pygame.transform.scale(pygame.image.load('images/WeaponsRoom.png').convert_alpha(),(800,800))
-            scrn.blit(bg,(100,100))
-            current=WeaponNPC('WEAPONS (E)',pygame.transform.scale(npc_images.subsurface((50,180,130,200)),(100,160))) #CHANGE IMAGE TO FIT
+            current=WeaponNPC('WEAPONS (E)',pygame.transform.scale(npc_images.subsurface((50,180,130,200)),(100,160)))
         #elif room 3: #show tutorial npc on scrn
         elif room==3:
             bg=pygame.transform.scale(pygame.image.load('images/TutorialRoom.png').convert_alpha(),(800,800))
-            scrn.blit(bg,(100,100))
-            current=TutorialNPC('TUTORIAL (E)',pygame.transform.scale(npc_images.subsurface((880,180,130,200)),(100,160))) #CHANGE IMAGE TO FIT
-        current.show(scrn,(300,678))
+            current=TutorialNPC('TUTORIAL (E)',pygame.transform.scale(npc_images.subsurface((880,180,130,200)),(100,160)))
         run=True
         while run:
+            miscellaneous.show_hud(scrn,player.health,player.weapon,player.upgrade,player.charge,player.money)
+            scrn.blit(bg,(100,100))
+            current.show(scrn,(300,678))
             #player movement here
+            
+            player.update()
+            player.draw(scrn)
             pygame.display.flip()
             #if user interacts with room npc:
             for event in pygame.event.get():
                 if event.type==pygame.KEYDOWN:
                     if event.key==pygame.K_e:
                         #run that npc's speak function
-                        upgrades, weapon = current.speak(scrn,1,[])   #CHANGE THE ONE HERE TO THE PLAYER's WEAPON AND UPGRADES   ALSO CHANGE THE THING IT IS SET TO
-                    elif event.key==pygame.K_RETURN:  #TEMPORARY TO LET THEM ADVANCE TO NEXT ROOM
-                        run=False
-                        room+=1
-            #if user in exit:                   #NEED PLAYER TO DO PLAYER MOVEMENT TO CHECK
+                        player.upgrades, player.weapon = current.speak(scrn,player.weapon,player.upgrade)
+                    elif event.key==pygame.K_w or event.key==pygame.K_UP or event.key==pygame.K_SPACE:
+                        player.jump()
+            #if user in exit:
+            if player.rect.x>=875:
                 #change room number
+                room+=1
                 #next loop iteration
-            #if user in entrance and room not 1     #SAME AS UP THERE ^, NEED PLAYER
+                player.rect.x=150
+                run=False
+            #if user in entrance and room not 1
+            if player.rect.x<=100 and room!=1:
                 #change room number
+                room-=1
                 #next loop iteration
+                player.rect.x=825
+                run=False
+            
             
 
-'''pygame.init()
-screen = pygame.display.set_mode((1000,1000))
-clock = pygame.time.Clock()
-home(screen,True)'''
+#create rewards class, get screen, difficulty
+class Rewards(NPC):
+    def speak(self,scrn,player):
+        typ=random.randint(1,3)
+        if typ==1:
+            player.health+=1 #CHECK FOR MAX HEALTH
+        elif typ==2:
+            player.money+=random.randint(5,25)
+        elif typ==3:
+            up=miscellaneous.run_upgrade(scrn,player)
+            if up:
+                player.upgrade=up
+            else:
+                player.money+=random.randint(5,25)
+        return player #HAVE SHOW REWARD AND STOP FOR A MOMENT
