@@ -69,5 +69,6 @@ def run_loop(current_player,screen):
 # After this, we need to make sure setup() runs in run_loop the proper amount of times, and then have the heal room, shop room, and finally boss room load.
 # This all needs to work so if the user dies, they return to the home base with the meta currency they collected.
             
+# Maybe just generate platforms, enemies, and reward in setup instead of relying on a finicky room class?
 
 
