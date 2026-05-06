@@ -4,7 +4,7 @@
 # import all neccesary sprites
 import random
 import pygame
-from sprite_creation_and_managment import *
+from sprite_manage import *
 # class Reward
 
 # class CombatRoom:
@@ -43,18 +43,6 @@ from sprite_creation_and_managment import *
     # load_art():
         # load background art and set up basic collision
 
-class BossRoom(CombatRoom):
-    def __init__():
-        # basic attributes will be #platforms and art
-        self.image = pygame.image.load("images/BossRoom.png")
-
-    def boss_reward():
-        # override preset reward and genreate boss-specific reward (something special needed for certain upgrades)
-        boss_sheet = pygame.image.load("images/boss-sheet.png").convert_alpha()
-        sprite = (40,30,20,20)
-        boss_drop = boss_sheet.subsurface(sprite)
-        boss_drop = pygame.transform.scale(boss_drop,(100,100))
-        screen.blit(boss_drop, (400,400))
 
 
 # class Shop:
@@ -121,11 +109,20 @@ class Platform:
     def __init__(self,x,y):
         self.x = x
         self.y = y
+        self.top = -(self.y)
+        self.bottom = self.y
+        self.left = self.x
+        self.right = -(self.x)
+        self.sprite = pygame.image.load("images\Platform.png").convert_alpha()
+        self.sprite_rect = self.sprite.image.get_rect(top_left=(self.x,self.y))
+
+    def collide_player(self,player):
+        if self.sprite_rect.collide_rect(player.rect):
+            pass
 
     def draw(self,screen):
-        sprite = pygame.image.load("Platform place holder").convert_alpha()
-        sprite_rect = sprite.image.get_rect(top_left=(self.x,self.y))
-        screen.blit(sprite,sprite_rect)
+        
+        screen.blit(self.sprite,self.sprite_rect)
 
 class Reward:
     def __init__(self,type,x,y):
@@ -182,14 +179,15 @@ class CombatRoom:
 
     # need to figure out most of this
     def generate_enemies(self):
+        enemy_types = ['drone','melee','ranger']
         enemies = []
 
-        for _ in range(1,5):
-            enemy = Enemy(random.randint(200,400),random.randint(200,400))
-            enemies.append(enemy)
+        for i in range(1,5):
+            enemies.append(random.choice(enemy_types))
 
-        return enemies
-    
+        self.enemies = enemies
+
+        
     def generate_rewards(self):
         # probably gonna want to add more reward types
         reward_choices = ["Health","Upgrade","Run Currency", "Meta Currency"]
@@ -216,3 +214,16 @@ class CombatRoom:
         for i in self.enemies:
             i.draw(screen)
             # ask Ryan how enemies are spawned
+
+class BossRoom(CombatRoom):
+    def __init__(self):
+        # basic attributes will be #platforms and art
+        self.image = pygame.image.load("images/BossRoom.png")
+
+    def boss_reward():
+        # override preset reward and genreate boss-specific reward (something special needed for certain upgrades)
+        boss_sheet = pygame.image.load("images/boss-sheet.png").convert_alpha()
+        sprite = (40,30,20,20)
+        boss_drop = boss_sheet.subsurface(sprite)
+        boss_drop = pygame.transform.scale(boss_drop,(100,100))
+        screen.blit(boss_drop, (400,400))
