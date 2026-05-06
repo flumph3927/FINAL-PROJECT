@@ -1,6 +1,6 @@
 #All home base items, NPC classes, 
 
-import pygame, miscellaneous, helpers
+import pygame,time, miscellaneous, helpers
 
 #create class NPC
 class NPC:
@@ -49,8 +49,8 @@ class WeaponNPC(NPC):
         gaunt=miscellaneous.Button(60,60,pygame.transform.scale(weapons.subsurface((80, 180, 100, 100)),(60,60)),1,'GAUNTLET',300,700)
         gun=miscellaneous.Button(60,60,pygame.transform.scale(weapons.subsurface((475, 180, 100, 100)),(60,60)),2,'M1 GARAND',640,700)
         #loop
-        loop=True
-        while loop:
+        lop=True
+        while lop:
             scrn.fill((0,0,0))
             #place all weapons on screen as name and image
             gaunt.draw(scrn)
@@ -67,6 +67,11 @@ class WeaponNPC(NPC):
             pygame.display.flip()
             #if weapon clicked
             for event in pygame.event.get():
+                if event.type==pygame.KEYDOWN:
+                    #if esc clicked
+                    if event.key==pygame.K_ESCAPE:
+                        #break out of loop
+                        lop=False
                 if gaunt.is_clicked(event): wpn=1
                 elif gun.is_clicked(event): wpn=2
                 else: wpn=0
@@ -98,19 +103,14 @@ class WeaponNPC(NPC):
                                 if event.key==pygame.K_RETURN:
                                     #return weapon selected
                                     scrn.fill((0,0,0))
-                                    return wpn
+                                    return upss, wpn
                                 #if esc clicked
                                 if event.key==pygame.K_ESCAPE:
                                     #break out of loop
                                     slcted=False
-                                    continue
-                if event.type==pygame.KEYDOWN:
-                    #if esc clicked
-                    if event.key==pygame.K_ESCAPE:
-                        #break out of loop
-                        loop=False
+                                    time.sleep(0.1)
         scrn.fill((0,0,0))
-        return upss,wpn
+        return upss, wpn
 
 
 #create class TutorialNPC, sublclass of NPC
@@ -161,7 +161,7 @@ def home(scrn,diffs):
         #show room background on 
         npc_images=pygame.image.load('images/NPC.png').convert_alpha()
         #show HUD using function
-        miscellaneous.show_hud(scrn,5,1,[],4,35223)  #NEED TO TAKE PLAYER INTO HOME FUNCTION AND PUT STUFF IN HERE
+        miscellaneous.show_hud(scrn,5,1,[],4,523)  #NEED TO TAKE PLAYER INTO HOME FUNCTION AND PUT STUFF IN HERE
         #if room is first:
         if room==1:
             bg=pygame.transform.scale(pygame.image.load('images/MetaUpgradesRoom.png').convert_alpha(),(800,800))
@@ -174,12 +174,12 @@ def home(scrn,diffs):
         elif room==2:
             bg=pygame.transform.scale(pygame.image.load('images/WeaponsRoom.png').convert_alpha(),(800,800))
             scrn.blit(bg,(100,100))
-            current=WeaponNPC('WEAPONS (E)',pygame.transform.scale(npc_images.subsurface((50, 180,130,200)),(100,160))) #CHANGE IMAGE TO FIT
+            current=WeaponNPC('WEAPONS (E)',pygame.transform.scale(npc_images.subsurface((50,180,130,200)),(100,160))) #CHANGE IMAGE TO FIT
         #elif room 3: #show tutorial npc on scrn
         elif room==3:
             bg=pygame.transform.scale(pygame.image.load('images/TutorialRoom.png').convert_alpha(),(800,800))
             scrn.blit(bg,(100,100))
-            current=TutorialNPC('TUTORIAL (E)',pygame.transform.scale(npc_images.subsurface((15, 150, 100, 100)),(100,160))) #CHANGE IMAGE TO FIT
+            current=TutorialNPC('TUTORIAL (E)',pygame.transform.scale(npc_images.subsurface((880,180,130,200)),(100,160))) #CHANGE IMAGE TO FIT
         current.show(scrn,(300,678))
         run=True
         while run:
@@ -190,14 +190,14 @@ def home(scrn,diffs):
                 if event.type==pygame.KEYDOWN:
                     if event.key==pygame.K_e:
                         #run that npc's speak function
-                        upgrades,weapon= current.speak(scrn,1,[])   #CHANGE THE ONE HERE TO THE PLAYER's WEAPON AND UPGRADES   ALSO CHANGE THE THING IT IS SET TO
-                    elif event.key==pygame.K_RETURN:  #TEMPORARY
+                        upgrades, weapon = current.speak(scrn,1,[])   #CHANGE THE ONE HERE TO THE PLAYER's WEAPON AND UPGRADES   ALSO CHANGE THE THING IT IS SET TO
+                    elif event.key==pygame.K_RETURN:  #TEMPORARY TO LET THEM ADVANCE TO NEXT ROOM
                         run=False
                         room+=1
             #if user in exit:                   #NEED PLAYER TO DO PLAYER MOVEMENT TO CHECK
                 #change room number
                 #next loop iteration
-            #if user in entrance and room not 1
+            #if user in entrance and room not 1     #SAME AS UP THERE ^, NEED PLAYER
                 #change room number
                 #next loop iteration
             
