@@ -54,7 +54,7 @@ class BossRoom(CombatRoom):
         sprite = (40,30,20,20)
         boss_drop = boss_sheet.subsurface(sprite)
         boss_drop = pygame.transform.scale(boss_drop,(100,100))
-        screen.blit(boss_drop, (400,400))
+        screen.blit(boss_drop, (400,700))
 
 
 # class Shop:

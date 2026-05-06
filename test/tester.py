@@ -260,15 +260,15 @@ def setup():
             for hit in hits:
                 player.health -= 0.5; player.iframes = 25
         boss_sheet = pygame.image.load("images/boss-sheet.png").convert_alpha()
-        sprite = (40,30,20,20)
-        boss_drop = boss_sheet.subsurface(sprite)
-        boss_drop = pygame.transform.scale(boss_drop,(100,100))
+        sprite = (73,70,20,35)
+        boss_drop = boss_sheet.subsurface(sprite).convert_alpha()
+        boss_drop = pygame.transform.scale(boss_drop,(50,100))
 
         # Rendering
         screen.fill((255, 255, 255))
         for wall in [(0,0,800,100), (0,500,800,100), (0,0,100,600), (700,0,100,600)]:
             pygame.draw.rect(screen, (0,0,0), wall)
-        screen.blit(boss_drop, (400,400))
+        screen.blit(boss_drop, (300,300))
         player.draw(screen)
         weapon_hitbox = player.draw_active_weapon(screen)
         
