@@ -113,116 +113,90 @@ class Platform:
         self.bottom = self.y
         self.left = self.x
         self.right = -(self.x)
-        self.sprite = pygame.image.load("images\Platform.png").convert_alpha()
-        self.sprite_rect = self.sprite.image.get_rect(top_left=(self.x,self.y))
+        self.sprite = pygame.image.load("images\\Platform.png").convert_alpha()
+        self.sprite = pygame.transform.scale(self.sprite,(75,150))
+        self.sprite_rect = self.sprite.get_rect()
+        self.sprite_rect.topleft = (self.x, self.y)
 
-    def collide_player(self,player):
-        if self.sprite_rect.collide_rect(player.rect):
-            pass
 
     def draw(self,screen):
-        
         screen.blit(self.sprite,self.sprite_rect)
-
-class Reward:
-    def __init__(self,type,x,y):
-        self.type = type
-        self.rect = pygame.Rect(50,50,x,y)
-
-    def interact(self,player):
-        pass        
-
-    def draw(self,screen):
-        pass
 
 
 class CombatRoom:
-    def __init__(self,width,height,reward):
+    def __init__(self,width,height):
         self.width = width
         self.height = height
-        self.reward = reward
         self.enemies = []
-        self.platforms = []
-        self.next_rewards = []
+        
 
-    # low, mid, and high are values for the required x value of that room's range of platforms.
-    def generate_platforms(self,low,mid,high):
-        def low_platforms(low):
+    def generate_platforms(self):
+        platforms = []
+        def low_platforms():
             platform_1_y = random.randint(100,300)
-            platform_1 = Platform(low,platform_1_y)
+            platform_1 = Platform(300,platform_1_y)
 
             platform_2_y = random.randint(100,300)
-            platform_2 = Platform(low,platform_2_y)
+            platform_2 = Platform(700,platform_2_y)
 
             return platform_1,platform_2
 
-        def mid_platforms(mid):
+        def mid_platforms():
             platform_y = random.randint(400,500)
-            platform = Platform(mid,platform_y)
+            platform = Platform(500,platform_y)
 
             return platform
 
-        def high_platforms(high):
-            platform_1_y = random.randint(600,800)
-            platform_1 = Platform(high,platform_1_y)
+        def high_platforms():
+            platform_1_y = random.randint(500,600)
+            platform_1 = Platform(300,platform_1_y)
 
-            platform_2_y = random.randint(600,800)
-            platform_2 = Platform(high,platform_2_y)
+            platform_2_y = random.randint(500,600)
+            platform_2 = Platform(700,platform_2_y)
 
             return platform_1,platform_2
         
-        low_1,low_2 = low_platforms(low)
-        mid_1 = mid_platforms(mid)
-        high_1,high_2 = high_platforms(high)
+        low_1,low_2 = low_platforms()
+        mid_1 = mid_platforms()
+        high_1,high_2 = high_platforms()
 
-        self.platforms.append(low_1,low_2,mid_1,high_1,high_2)
+        platforms.append(low_1)
+        platforms.append(low_2)
+        platforms.append(mid_1)
+        platforms.append(high_1)
+        platforms.append(high_2)
+
+        return platforms
 
     # need to figure out most of this
     def generate_enemies(self):
         enemy_types = ['drone','melee','ranger']
         enemies = []
 
-        for i in range(1,5):
+        for _ in range(1,5):
             enemies.append(random.choice(enemy_types))
 
         self.enemies = enemies
 
-        
-    def generate_rewards(self):
-        # probably gonna want to add more reward types
-        reward_choices = ["Health","Upgrade","Run Currency", "Meta Currency"]
-        rewards = []
-        for _ in range(2):
-            rewards.append(random.choice(reward_choices))
 
-        self.next_rewards = rewards
-    
-    # figure out what variables will be changed, how to make interactable rewards (make a reward class)
-    def spawn_reward(self):
-        pass
-        # figure out how to make rewards
-
-    def draw(self,background,screen,low,mid,high):
-        bg_image = pygame.image.load(background).convert_alpha()
+    def draw(self,screen,platforms):
+        bg_image = pygame.image.load("images\\squarecombatroom-pixilart.png").convert_alpha()
         bg_image = pygame.transform.scale(bg_image,(800,800))
-        screen.blit(bg_image)
-        self.platforms = self.generate_platforms(low,mid,high)
-        for i in self.platforms:
+        screen.blit(bg_image,(100,100))
+        self.platforms = self.generate_platforms()
+        for i in platforms:
             i.draw(screen)
 
-        self.enemies = self.generate_enemies()
-        for i in self.enemies:
-            i.draw(screen)
-            # ask Ryan how enemies are spawned
+        
 
 class BossRoom(CombatRoom):
     def __init__(self):
         # basic attributes will be #platforms and art
-        self.image = pygame.image.load("images/BossRoom.png")
+        self.image = pygame.image.load("images//BossRoom.png")
 
     def boss_reward():
         # override preset reward and genreate boss-specific reward (something special needed for certain upgrades)
-        boss_sheet = pygame.image.load("images/boss-sheet.png").convert_alpha()
+        boss_sheet = pygame.image.load("images//boss-sheet.png").convert_alpha()
         sprite = (40,30,20,20)
         boss_drop = boss_sheet.subsurface(sprite)
         boss_drop = pygame.transform.scale(boss_drop,(100,100))
