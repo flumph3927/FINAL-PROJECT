@@ -27,7 +27,7 @@ def show_hud(scrn,hp,wpn,upgrade,ult,money):
     scrn.blit(wsprt,(20,920))
     scrn.blit(text,(100,920))
     #place money in bottom right
-    coin=pygame.transform.scale(elements.subsurface((337,110,100,100)),(60,60))
+    coin=pygame.transform.scale(elements.subsurface((200,110,100,100)),(60,60))
     scrn.blit(coin,(500,920))
     text=font.render(str(money), True, (255, 255, 255))
     scrn.blit(text,(560,930))

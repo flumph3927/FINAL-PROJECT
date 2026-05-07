@@ -19,12 +19,37 @@ class NPC:
         scrn.blit(text,(coords[0],coords[1]-40))
 
 
+
+#OOF=miscellaneous.Button(width,height,image,returns,text,x,y)
+
+
 #create class UpgradeNPC, subclass of NPC
-    #create function speak, get screen, user upgrades, and currency
+class UpgradeNPC(NPC):
+
+    #create function speak, get screen,weapon, user upgrades, and currency
+    def speak(self,scrn,wpn,u_up,money):
         #set upgrade tree
+        tree=[[['+1 HEALTH','IMAGE',400,200]],[['2X DAMAGE','IMAGE',200,300],['2X I-FRAMES','IMAGE',470,300],['+1 HEALTH','IMAGE',740,300]],[['3X DAMAGE','IMAGE',200,400],['DOUBLE JUMP','IMAGE',470,400],['+1 HEALTH','IMAGE',740,400]],[['+2 HEALTH','IMAGE',740,500]]]          #ADD IMAGES
+        user=[]
+        for i in tree:
+            for x in i:
+                user.append(x[0])
         #loop
+        buttons=[]
+        for i in tree:
+            for x in i:
+                buttons.append(miscellaneous.Button(60,60,x[1],x[0],x[0],x[2],x[3]))
+        runb=True
+        while runb:
             #place all user upgrades in their place on screen, upgrade sprite with name below
+            for i in buttons:
+                if i.text in user:
+                    i.draw(scrn)
             #place esc to exit message in corner
+            font=pygame.font.SysFont('',60)
+            text=font.render('ESC TO EXIT', True, (255, 255, 255))
+            scrn.blit(text,(50,50))
+            pygame.display.flip()
             #loop through upgrades as upgrade
                 #if user upgrades contain all prerequisites of upgrade
                     #place upgrade in appropriate position on screen
@@ -44,7 +69,7 @@ class NPC:
 class WeaponNPC(NPC):
 
     #create function speak, get screen
-    def speak(self,scrn,selected,upss):
+    def speak(self,scrn,selected,upss,money):
         weapons=pygame.image.load('images/weapon.png').convert_alpha()
         gaunt=miscellaneous.Button(60,60,pygame.transform.scale(weapons.subsurface((80, 180, 100, 100)),(60,60)),1,'GAUNTLET',300,700)
         gun=miscellaneous.Button(60,60,pygame.transform.scale(weapons.subsurface((475, 180, 100, 100)),(60,60)),2,'M1 GARAND',640,700)
@@ -103,24 +128,24 @@ class WeaponNPC(NPC):
                                 if event.key==pygame.K_RETURN:
                                     #return weapon selected
                                     scrn.fill((0,0,0))
-                                    return upss, wpn
+                                    return upss, wpn, money
                                 #if esc clicked
                                 if event.key==pygame.K_ESCAPE:
                                     #break out of loop
                                     slcted=False
                                     time.sleep(0.1)
         scrn.fill((0,0,0))
-        return upss, wpn
+        return upss, wpn, money
 
 
 #create class TutorialNPC, sublclass of NPC
 class TutorialNPC(NPC):
 
     #create function speak, get screen
-    def speak(self,scrn,weapon,upss):
+    def speak(self,scrn,weapon,upss,money):
         #run function tutorial on screen
         tutorial(scrn)
-        return upss, weapon
+        return upss, weapon, money
     
 
 #create function tutorial, get screen
@@ -178,11 +203,10 @@ def home(scrn,diffs,player):
             current=TutorialNPC('TUTORIAL (E)',pygame.transform.scale(npc_images.subsurface((880,180,130,200)),(100,160)))
         run=True
         while run:
-            miscellaneous.show_hud(scrn,player.health,player.weapon,player.upgrade,player.charge,player.money)
+            miscellaneous.show_hud(scrn,player.health,player.weapon,player.upgrades,player.charge,player.money)
             scrn.blit(bg,(100,100))
             current.show(scrn,(300,678))
             #player movement here
-            
             player.update()
             player.draw(scrn)
             pygame.display.flip()
@@ -191,7 +215,7 @@ def home(scrn,diffs,player):
                 if event.type==pygame.KEYDOWN:
                     if event.key==pygame.K_e:
                         #run that npc's speak function
-                        player.upgrades, player.weapon = current.speak(scrn,player.weapon,player.upgrade)
+                        player.meta_upgrades, player.weapon,player.money = current.speak(scrn,player.weapon,player.upgrades,player.money)              #CHANGE WHAT iS PASSED TO IT TO META_UPGRADES
                     elif event.key==pygame.K_w or event.key==pygame.K_UP or event.key==pygame.K_SPACE:
                         player.jump()
             #if user in exit:
@@ -226,7 +250,7 @@ class Rewards(NPC):
         elif typ==3:
             up=miscellaneous.run_upgrade(scrn,player)
             if up:
-                player.upgrade=up
+                player.upgrades=up
                 return player
             else:
                 print('fail')
@@ -238,8 +262,6 @@ class Rewards(NPC):
         time.sleep(5)
         return player
 
-'''pygame.init()
-bob=Rewards('bob','safo')
+pygame.init()
 screen=pygame.display.set_mode((1000, 1000))
-plae=sprite_manage.Player()
-bob.speak(screen,plae)'''
+home(screen,True,sprite_manage.Player)
