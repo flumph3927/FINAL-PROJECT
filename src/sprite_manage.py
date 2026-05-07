@@ -2,6 +2,7 @@ import pygame
 import math
 import random
 from knockback import knockbackfunc
+from data_management import *
 from miscellaneous import *
 
 #  INITIAL SETUP 
@@ -17,6 +18,8 @@ class Bullet(pygame.sprite.Sprite):
     def __init__(self, x, y, target_x, target_y, damage, color=(255, 200, 0)):
         super().__init__()
         self.image = pygame.Surface((8, 8))
+        if color == (0,0,250):
+            self.image = pygame.Surface((24, 8))
         self.image.fill(color)
         self.rect = self.image.get_rect(center=(x, y))
         self.damage = damage
@@ -61,19 +64,42 @@ class Player(pygame.sprite.Sprite):
         except:
             self.gun_surf = pygame.Surface((32, 16)); self.gun_surf.fill((100, 100, 100))
 
+
+
+
+
+
+                ###########Have variable file path############
+        self.user_data = load_game(file_path="documents/savefile_one.csv")
+        self.max_health = 5.0 * float(self.user_data["health_mod"])
+        self.damage_mod = float(self.user_data["damage_mod"]) ##########Implement at each damge use #############
+        self.iframes_mod = float(self.user_data["i_frame_mod"]) #########Implement this at each of the uses of player i frames ###########
+        
+
         # Stats
         self.speed, self.floor_y, self.y_velocity = 5, 860, 0
         self.gravity, self.jump_strength = 0.8, -16.5
-        self.health = 5.0
+        self.health = self.max_health
         self.iframes = 0
         self.is_jumping = False
         self.is_attacking, self.attack_timer = False, 0
         self.is_shooting, self.shoot_timer = False, 0
         self.shoot_cooldown = 0
-        self.weapon = 2
+        self.weapon_choices = self.user_data["weapons"] #########Check this when switching weapon ###########
+        self.weapon = 1
         self.charge = 0
         self.money = 0
-        self.upgrade = []
+        
+        ##############Manage these variables #########################
+        self.meta_currency = float(self.user_data["meta_currency"])
+        self.meta_upgrades = self.user_data['upgrades']
+        self.boss_drops = self.user_data["boss_drops"]
+        self.upgrades = []
+
+
+
+
+
 
     def jump(self):
         if not self.is_jumping:
@@ -90,20 +116,8 @@ class Player(pygame.sprite.Sprite):
         
         self.y_velocity += self.gravity
         self.rect.y += self.y_velocity
-
-        # Check for the specific color at the bottom of the sprite
-        pixel_x = self.rect.centerx
-        pixel_y = self.rect.bottom + 1  # pixel just below the sprite
-        # Ensure the point is within screen bounds
-        if 0 <= pixel_x < screen.get_width() and 0 <= pixel_y < screen.get_height():
-            pixel_color = screen.get_at((int(pixel_x), int(pixel_y)))[:3]
-            if pixel_color == (156, 90, 60):
-                # Stop falling
-                self.rect.y = pixel_y - self.rect.height
-                self.y_velocity = 0
-                self.is_jumping = False
-            elif self.rect.y >= self.floor_y:
-                self.rect.y, self.y_velocity, self.is_jumping = self.floor_y, 0, False
+        if self.rect.y >= self.floor_y:
+            self.rect.y, self.y_velocity, self.is_jumping = self.floor_y, 0, False
 
         # Timers
         if self.attack_timer > 0: self.attack_timer -= 1
@@ -169,6 +183,9 @@ class Enemy(pygame.sprite.Sprite):
     def __init__(self, x, y, enemy_type='drone'):
         super().__init__()
 
+
+
+
         if enemy_type=='drone':
             try:
                 img = pygame.image.load("images/spritesheet_2.png")
@@ -177,12 +194,10 @@ class Enemy(pygame.sprite.Sprite):
                 self.image = pygame.Surface((30, 30))
                 self.image.fill((0, 255, 0))
         if enemy_type == 'melee':
-            try:
-                img = pygame.image.load("images/spritesheet_2.png")
-                self.image = pygame.transform.scale(img.subsurface((60, 190, 97, 130)), (30,30))
-            except:
-                self.image = pygame.Surface((30, 30))
-                self.image.fill((0, 255, 0))
+            img = pygame.image.load("image/spritesheet_2.png")
+            self.image = pygame.transform.scale(img.subsurface((60, 190, 97, 130)), (30,30))
+
+
 
         self.rect = self.image.get_rect(topleft=(x, y))
         self.speed, self.health = 2, 5
@@ -230,17 +245,18 @@ class Enemy(pygame.sprite.Sprite):
 class MeleeEnemy(pygame.sprite.Sprite):
     def __init__(self, x, y):
         super().__init__()
-        try:
-            img = pygame.image.load("images/spritesheet_2.png")
-            self.image = pygame.transform.scale(img.subsurface((65, 150, 130, 170)), (30,40))
-        except:
-            self.image = pygame.Surface((30, 40))
-            self.image.fill((0, 255, 0))
+        img = pygame.image.load("images/spritesheet_2.png")
+        self.image = pygame.transform.scale(img.subsurface((65, 150, 130, 170)), (30,40))
+    
         self.rect = self.image.get_rect(topleft=(x, y))
         self.speed = 3
         self.health = 3
         self.max_health = self.health
         self.hit_cooldown, self.attack_cooldown = 0, 0
+
+
+
+
 
     def update(self, target, enemy_bullets):
         if target.health <= 0:
@@ -267,46 +283,60 @@ class MeleeEnemy(pygame.sprite.Sprite):
 class RangerEnemy(pygame.sprite.Sprite):
     def __init__(self, x, y):
         super().__init__()
-        try:
-            img = pygame.image.load("images/spritesheet_2.png")
-            self.image = pygame.transform.scale(img.subsurface((365, 150, 130, 170)), (30,40))
-        except:
-            self.image = pygame.Surface((30, 40))
-            self.image.fill((0, 255, 0))
+ 
+        img = pygame.image.load("images/spritesheet_2.png")
+        self.image = pygame.transform.scale(img.subsurface((365, 150, 130, 170)), (30,40))
+       
         self.rect = self.image.get_rect(topleft=(x, y))
         self.speed = 3
         self.health = 4
         self.max_health = self.health
         self.state = 'attack'
-        self.move_left_bound = 150
+        self.move_left_bound = 150  # keep within map bounds
         self.move_right_bound = 850
-        self.y = y
+        self.y = y  # fixed y position
         self.shoot_cooldown = 0
         self.hit_cooldown = 0
 
     def update(self, target, enemy_bullets):
         self.rect.y = self.y
+        # Check boundaries and switch direction if needed
         if self.rect.centerx <= self.move_left_bound:
             self.rect.centerx = self.move_left_bound
-            self.rect.x += 50
+            # Dash to the right
+            self.rect.x += 50  # dash move
         elif self.rect.centerx >= self.move_right_bound:
             self.rect.centerx = self.move_right_bound
-            self.rect.x -= 50
+            # Dash to the left
+            self.rect.x -= 50  # dash move
+
+        # Move within bounds
         dx = target.rect.centerx - self.rect.centerx
         dist_x = abs(dx)
+
+        # If player is very close, dash away
+        if dist_x < 200:
+            if self.rect.centerx > self.move_left_bound:
+                self.rect.x -= self.speed
+            elif self.rect.centerx < self.move_right_bound:
+                self.rect.x += self.speed
+        else:
+            # Follow boundaries
+            if self.rect.centerx < self.move_left_bound:
+                self.rect.x += self.speed
+            elif self.rect.centerx > self.move_right_bound:
+                self.rect.x -= self.speed
+
+        # Shoot at player with "infinite range" (no range limit, just shoot when in range)
         if self.shoot_cooldown == 0:
             dy = target.rect.centery - self.rect.centery
+            # Shoot if within a certain range
             dx_total = target.rect.centerx - self.rect.centerx
             dist = math.hypot(dx_total, dy)
-            if dist < 600:
-                # Create a blue, **tripled width** bullet
-                bullet = Bullet(self.rect.centerx, self.rect.centery, target.rect.centerx, target.rect.centery, damage=0.5, color=(0, 0, 255))
-                # Override the bullet's image to be wider (3x default width 8 -> 24)
-                bullet.image = pygame.Surface((24, 8))
-                bullet.image.fill((0, 0, 255))
-                bullet.rect = bullet.image.get_rect(center=(self.rect.centerx, self.rect.centery))
-                enemy_bullets.add(bullet)
-                self.shoot_cooldown = 60
+            if dist < 600:  # large range
+                # Fire bullet toward player
+                enemy_bullets.add(Bullet(self.rect.centerx, self.rect.centery, target.rect.centerx, target.rect.centery, damage=1, color=(0, 0, 250)))
+                self.shoot_cooldown = 90
         else:
             self.shoot_cooldown -= 1
 
@@ -357,7 +387,7 @@ def setup():
     while running:
         screen.fill((0, 0, 0))
         pygame.draw.rect(screen, (255, 255, 255), (100, 100, 800, 800))
-        show_hud(screen, player.health, player.weapon, player.upgrade, player.charge, player.money)
+        show_hud(screen, player.health, player.weapon, player.upgrades, player.charge, player.money)
         player.draw(screen)
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
@@ -448,4 +478,7 @@ def setup():
     pygame.quit()
 
 setup()
+
+
+
 #COLOR rgb(156, 90, 60)
