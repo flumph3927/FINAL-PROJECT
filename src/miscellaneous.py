@@ -69,7 +69,8 @@ class Button(helpers.Button):
 
 #create run upgrade function, get upgrades and screen
 def run_upgrade(scrn,player):
-    upgrades=(pygame.transform.scale(elements.subsurface((45,725,100,100)),(60,60)),pygame.transform.scale(elements.subsurface((180,725,100,100)),(60,60)),pygame.transform.scale(elements.subsurface((320,725,100,100)),(60,60)),pygame.transform.scale(elements.subsurface((465,720,100,100)),(60,60)),pygame.transform.scale(elements.subsurface((610,720,100,100)),(60,60)))
+    elements=pygame.image.load('images/HudElements.png').convert_alpha()
+    upgrades=[0,1,2,3]
     #choose three at random (weighted)
     for i in player.upgrade:
         if i in upgrades:
@@ -82,8 +83,8 @@ def run_upgrade(scrn,player):
         for i in range(3): chosen.append(upgrades.pop(random.randrange(len(upgrades))))
     #place the upgrade icons on screen with descriptions below
     elements=pygame.image.load('images/HudElements.png').convert_alpha()
-    sprites=(pygame.transform.scale(elements.subsurface((45,725,100,100)),(60,60)),pygame.transform.scale(elements.subsurface((180,725,100,100)),(60,60)),pygame.transform.scale(elements.subsurface((320,725,100,100)),(60,60)),pygame.transform.scale(elements.subsurface((465,720,100,100)),(60,60)),pygame.transform.scale(elements.subsurface((610,720,100,100)),(60,60)))
-    texts=['HEALTH UP','DAMAGE UP','ULT RECHARGE','first coin UP','second coin UP']
+    sprites=(pygame.transform.scale(elements.subsurface((45,725,100,100)),(60,60)),pygame.transform.scale(elements.subsurface((180,725,100,100)),(60,60)),pygame.transform.scale(elements.subsurface((320,725,100,100)),(60,60)),pygame.transform.scale(elements.subsurface((610,720,100,100)),(60,60)))
+    texts=['HEALTH UP','DAMAGE UP','ULT RECHARGE','MONEY UP']
     buttons=[]
     buttons.append(Button(60,60,sprites[chosen[0]],chosen[0],texts[chosen[0]],240,500))
     if len(chosen)!=1:
