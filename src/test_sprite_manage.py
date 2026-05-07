@@ -63,7 +63,7 @@ class Player(pygame.sprite.Sprite):
             self.gun_surf = pygame.Surface((32, 16)); self.gun_surf.fill((100, 100, 100))
 
         # Stats
-        self.speed, self.floor_y, self.y_velocity = 5, 860, 0
+        self.speed, self.floor_y, self.y_velocity = 5, 800, 0
         self.gravity, self.jump_strength = 0.8, -16.5
         self.health = 5.0
         self.iframes = 0
@@ -81,7 +81,7 @@ class Player(pygame.sprite.Sprite):
             self.y_velocity = self.jump_strength
             self.is_jumping = True
 
-    def update(self):
+    def update(self,platforms):
         keys = pygame.key.get_pressed()
         if self.health > 0:
             if keys[pygame.K_LEFT] or keys[pygame.K_a]:
@@ -120,6 +120,21 @@ class Player(pygame.sprite.Sprite):
         if self.health <= 0: self.image.set_alpha(100)
         elif self.iframes > 0: self.image.set_alpha(150)
         else: self.image.set_alpha(255)
+
+        # Collsion with generated platforms
+        for plat in platforms:
+            if self.rect.colliderect(plat.sprite_rect):
+                if self.rect.y > plat.bottom:
+                    self.rect.y = plat.bottom
+                
+                if self.rect.y < plat.top:
+                    self.rect.y = plat.top
+
+                if self.rect.x > plat.left:
+                    self.rect.x = plat.left
+
+                if self.rect.x < plat.right:
+                    self.rect.x = plat.right
 
     def draw(self, surface):
         surface.blit(self.image, self.rect)
@@ -341,13 +356,13 @@ def setup():
 
     room = CombatRoom(900,900) # Initilize the room
     room.generate_enemies() # Generate enemy list, similar to above code
-    room.generate_platforms() # Generate platforms, to be drawn later.
+    platforms = room.generate_platforms() # Generate platforms, to be drawn later.
 
     #enemy_type_list = ['drone', 'melee', 'ranger', 'drone', 'melee', 'ranger']
     # Count how many of each type
     drone_count = room.enemies.count('drone')
     melee_count = room.enemies.count('melee')
-    ranger_count = room.count('ranger')
+    ranger_count = room.enemies.count('ranger')
 
     # Spawn drones at fixed y position 50 pixels above ground
     drone_spawn_y = player.floor_y - 50
@@ -367,6 +382,7 @@ def setup():
     while running:
         screen.fill((0, 0, 0))
         pygame.draw.rect(screen, (255, 255, 255), (100, 100, 800, 800))
+        room.draw(screen,platforms)
         show_hud(screen, player.health, player.weapon, player.upgrade, player.charge, player.money)
         player.draw(screen)
         for event in pygame.event.get():
@@ -405,7 +421,7 @@ def setup():
                         player.attack_timer = 15
 
         # Update logica
-        player.update()
+        player.update(platforms)
         enemies.update(player, enemy_bullets)
         player_bullets.update()
         enemy_bullets.update()
@@ -458,4 +474,4 @@ def setup():
     pygame.quit()
 
 setup()
-#COLOR rgb(156, 90, 60)
+#COLOR rgb(156, 90, 60)s
