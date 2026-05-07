@@ -214,15 +214,32 @@ def home(scrn,diffs,player):
 #create rewards class, get screen, difficulty
 class Rewards(NPC):
     def speak(self,scrn,player):
+        font=pygame.font.SysFont('',60)
         typ=random.randint(1,3)
         if typ==1:
-            player.health+=1 #CHECK FOR MAX HEALTH
+            player.health+=1                                                    #CHECK FOR MAX HEALTH
+            text=font.render('INCREASED HEALTH', True, (255, 255, 255))
         elif typ==2:
-            player.money+=random.randint(5,25)
+            amt=random.randint(5,25)
+            player.money+=amt
+            text=font.render('+'+str(amt)+' MONEY', True, (255, 255, 255))
         elif typ==3:
             up=miscellaneous.run_upgrade(scrn,player)
             if up:
                 player.upgrade=up
+                return player
             else:
-                player.money+=random.randint(5,25)
-        return player #HAVE SHOW REWARD AND STOP FOR A MOMENT
+                print('fail')
+                amt=random.randint(5,25)
+                player.money+=amt
+                text=font.render('+'+str(amt)+' MONEY', True, (255, 255, 255))
+        scrn.blit(text,(300,470))
+        pygame.display.flip()
+        time.sleep(5)
+        return player
+
+'''pygame.init()
+bob=Rewards('bob','safo')
+screen=pygame.display.set_mode((1000, 1000))
+plae=sprite_manage.Player()
+bob.speak(screen,plae)'''
