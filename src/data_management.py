@@ -12,17 +12,17 @@ import csv
     # save al neccesary data (base stats, upgrades, meta currency)
 
 def load_game(file_path):
-    with open(file_path,mode="r",newline="") as user_csv:
-        fieldnames = ["health_mod","damage_mod","i_frame_mod","weapons","upgrades","meta_currency"]
-
-        reader = csv.DictReader(user_csv,fieldnames)
-
-        user_data = {}
-
-        for i in reader:
-            user_data.append(i)
-
-    return user_data
+    with open(file_path, mode="r", newline="") as user_csv:
+        fieldnames = ["health_mod", "damage_mod", "i_frame_mod", "weapons", "upgrades", "meta_currency","boss_drops"]
+        reader = csv.DictReader(user_csv, fieldnames=fieldnames)
+        
+        # 1. Skip the header row
+        next(reader) 
+        
+        # 2. Grab the actual data row
+        user_data = next(reader)
+        
+        return user_data
 
 def save_game(file_path,user_data):
     with open(file_path,mode="w",newline="") as user_csv:
