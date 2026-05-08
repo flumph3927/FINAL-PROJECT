@@ -90,7 +90,8 @@ class Player(pygame.sprite.Sprite):
         self.weapon = 1
         self.charge = 0
         self.money = 0
-        
+        self.super = False
+        self.fix = 0
         ##############Manage these variables #########################
         self.meta_currency = float(self.user_data["meta_currency"])
         self.meta_upgrades = self.user_data['upgrades']
@@ -117,8 +118,22 @@ class Player(pygame.sprite.Sprite):
         
         self.y_velocity += self.gravity
         self.rect.y += self.y_velocity
-        if self.rect.y >= self.floor_y:
-            self.rect.y, self.y_velocity, self.is_jumping = self.floor_y, 0, False
+        
+        # Check for the specific color at the bottom of the sprite
+        pixel_x = self.rect.centerx
+        pixel_y = self.rect.bottom + 1  # pixel just below the sprite
+        # Ensure the point is within screen bounds
+        if 0 <= pixel_x < screen.get_width() and 0 <= pixel_y < screen.get_height():
+            pixel_color = screen.get_at((int(pixel_x), int(pixel_y)))[:3]
+            if pixel_color == (156, 90, 60):
+                # Stop falling
+                self.rect.y = pixel_y - self.rect.height
+                self.y_velocity = 0
+                self.is_jumping = False
+            elif self.rect.y >= self.floor_y:
+                self.rect.y, self.y_velocity, self.is_jumping = self.floor_y, 0, False
+
+
 
         # Timers
         if self.attack_timer > 0: self.attack_timer -= 1
@@ -251,7 +266,7 @@ class MeleeEnemy(pygame.sprite.Sprite):
     
         self.rect = self.image.get_rect(topleft=(x, y))
         self.speed = 3
-        self.health = 3
+        self.health = 3.1
         self.max_health = self.health
         self.hit_cooldown, self.attack_cooldown = 0, 0
 
@@ -356,7 +371,7 @@ def setup():
 
     # List containing enemy types to spawn
     enemy_type_list = []
-    for i in range(5):
+    for i in range(4):
         num = random.randint(1,3)
         if num == 1:
             enemy_type_list.append('drone')
@@ -406,12 +421,18 @@ def setup():
                     if event.button == 1:
                         player.is_attacking = True
                         player.attack_timer = 15
+                    if event.button == 2  and player.charge == 4:
+                        player.damage_mod = 3
+                        player.is_attacking = True
+                        player.attack_timer = 15
+                        player.super = True
+                        player.charge = 0
                     if event.button == 3 and player.shoot_cooldown == 0:
                         mx, my = pygame.mouse.get_pos()
                         player.is_shooting = True
                         player.shoot_timer = 15
-                        player_bullets.add(Bullet(player.rect.centerx, player.rect.centery, mx, my, 1))
-                        player.shoot_cooldown = 25
+                        player_bullets.add(Bullet(player.rect.centerx, player.rect.centery, mx, my, 1*player.damage_mod))
+                        player.shoot_cooldown = 15
 
             if player.weapon == 2:
                 if event.type == pygame.MOUSEBUTTONDOWN and player.health > 0:
@@ -419,7 +440,7 @@ def setup():
                         mx, my = pygame.mouse.get_pos()
                         player.is_shooting = True
                         player.shoot_timer = 15
-                        player_bullets.add(Bullet(player.rect.centerx, player.rect.centery, mx, my, 2))
+                        player_bullets.add(Bullet(player.rect.centerx, player.rect.centery, mx, my, 2*player.damage_mod))
                         player.shoot_cooldown = 25
                     if event.button == 3 and player.shoot_cooldown == 0:
                         player.is_attacking = True
@@ -442,16 +463,16 @@ def setup():
 
         for enemy in list(enemies):
             if weapon_hitbox and weapon_hitbox.colliderect(enemy.rect) and enemy.hit_cooldown == 0:
-                enemy.health -= 1
+                enemy.health -= 1.5*player.damage_mod
                 enemy.hit_cooldown = 20
                 knockbackfunc(enemy, None, player)
 
             bullet_hits = pygame.sprite.spritecollide(enemy, player_bullets, True)
             for b in bullet_hits:
                 if player.weapon == 2:
-                    enemy.health -= 1
+                    enemy.health -= 1*player.damage_mod
                 else:
-                    enemy.health -= 0.5
+                    enemy.health -= 0.5*player.damage_mod
 
             # Damage from melee enemies
             if isinstance(enemy, MeleeEnemy):
@@ -468,6 +489,12 @@ def setup():
             else:
                 screen.blit(enemy.image, enemy.rect)
                 enemy.draw_health_bar(screen)
+        
+        if player.super == True:
+            player.fix+=1
+            if player.fix == 2:
+                player.damage_mod = float(player.user_data["damage_mod"])
+                player.fix == 1
 
         # Draw bullets
         player_bullets.draw(screen)
