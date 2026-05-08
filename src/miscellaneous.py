@@ -65,6 +65,7 @@ class Button(helpers.Button):
         text_surf = self.font.render(self.text, True, (255, 255, 255))
         text_rect = text_surf.get_rect(center=(self.rect.center[0],self.rect.center[1]+40))
         screen.blit(text_surf, text_rect)
+        self.drawn=True
 
 
 #create run upgrade function, get upgrades and screen
