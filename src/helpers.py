@@ -10,6 +10,7 @@ class Button:
         # rectangle needed for collision detection
         self.rect = pygame.Rect(x,y,width,height)
         self.font = pygame.font.SysFont('Arial',30)
+        self.drawn=False
 
     def draw(self,screen):
         mouse_pos = pygame.mouse.get_pos()
@@ -20,10 +21,12 @@ class Button:
         text_surf = self.font.render(self.text, True, (255, 255, 255))
         text_rect = text_surf.get_rect(center=self.rect.center)
         screen.blit(text_surf, text_rect)
+        self.drawn=True
 
     def is_clicked(self, event):
         # Check if the mouse click happened inside the button's rectangle
         if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
             if self.rect.collidepoint(event.pos):
-                return True
+                if self.drawn:
+                    return True
         return False

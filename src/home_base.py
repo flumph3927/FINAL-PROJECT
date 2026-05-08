@@ -29,40 +29,71 @@ class UpgradeNPC(NPC):
     #create function speak, get screen,weapon, user upgrades, and currency
     def speak(self,scrn,wpn,u_up,money):
         #set upgrade tree
-        tree=[[['+1 HEALTH','IMAGE',400,200]],[['2X DAMAGE','IMAGE',200,300],['2X I-FRAMES','IMAGE',470,300],['+1 HEALTH','IMAGE',740,300]],[['3X DAMAGE','IMAGE',200,400],['DOUBLE JUMP','IMAGE',470,400],['+1 HEALTH','IMAGE',740,400]],[['+2 HEALTH','IMAGE',740,500]]]          #ADD IMAGES
-        user=[]
-        for i in tree:
-            for x in i:
-                user.append(x[0])
+        weapons=pygame.image.load('images/weapon.png').convert_alpha()
+        tree={'+1 HEALTH':[pygame.transform.scale(weapons.subsurface((475, 180, 100, 100)),(60,60)),470,200,None,100],'2X DAMAGE':[pygame.transform.scale(weapons.subsurface((475, 180, 100, 100)),(60,60)),200,300,'+1 HEALTH',100],'2X I-FRAMES':[pygame.transform.scale(weapons.subsurface((475, 180, 100, 100)),(60,60)),470,300,'+1 HEALTH',100],'+1 HEALTH 2':[pygame.transform.scale(weapons.subsurface((475, 180, 100, 100)),(60,60)),740,300,'+1 HEALTH',100],'3X DAMAGE':[pygame.transform.scale(weapons.subsurface((475, 180, 100, 100)),(60,60)),200,400,'2X DAMAGE',100],'DOUBLE JUMP':[pygame.transform.scale(weapons.subsurface((475, 180, 100, 100)),(60,60)),470,400,'2X I-FRAMES',100],'+1 HEALTH 3':[pygame.transform.scale(weapons.subsurface((475, 180, 100, 100)),(60,60)),740,400,'+1 HEALTH 2',100],'+2 HEALTH':[pygame.transform.scale(weapons.subsurface((475, 180, 100, 100)),(60,60)),740,500,'+1 HEALTH 3',100]}         #ADD CORRECT IMAGES
         #loop
         buttons=[]
         for i in tree:
-            for x in i:
-                buttons.append(miscellaneous.Button(60,60,x[1],x[0],x[0],x[2],x[3]))
+            buttons.append(miscellaneous.Button(60,60,tree[i][0],i,i,tree[i][1],tree[i][2]))                  #DRAW CURRENCY TOO
         runb=True
         while runb:
+            scrn.fill((0,0,0))
             #place all user upgrades in their place on screen, upgrade sprite with name below
             for i in buttons:
-                if i.text in user:
+                if i.text in u_up:
                     i.draw(scrn)
             #place esc to exit message in corner
             font=pygame.font.SysFont('',60)
             text=font.render('ESC TO EXIT', True, (255, 255, 255))
             scrn.blit(text,(50,50))
-            pygame.display.flip()
             #loop through upgrades as upgrade
-                #if user upgrades contain all prerequisites of upgrade
-                    #place upgrade in appropriate position on screen
-            #if upgrade clicked
-                #loop
-                    #draw upgrade clicked big with description added and an esc to exit on screen
-                    #if user has enough currency, place enter to get box on screen
-                    #if enter clicked
-                        #return upgrade selected
-                    #if esc clicked
+            for i in buttons:
+                if tree[i.text][3]:
+                    #if user upgrades contain all prerequisites of upgrade
+                    if tree[i.text][3] in u_up:
+                        #place upgrade in appropriate position on screen
+                        i.draw(scrn)
+                else: i.draw(scrn)
+            pygame.display.flip()
+            for event in pygame.event.get():
+                #if esc clicked
+                if event.type==pygame.KEYDOWN:
+                    if event.key==pygame.K_ESCAPE:
                         #break out of loop
-            #if esc clicked
-                #break out of loop
+                        runb=False
+                #if upgrade clicked
+                for i in buttons:
+                    if i.is_clicked(event):
+                        #loop
+                        loopa=True
+                        while loopa:
+                            scrn.fill((0,0,0))
+                            #draw upgrade clicked big with description added and an esc to exit on screen
+                            scrn.blit(tree[i.text][0],(470,200))
+                            #if user has enough currency, place enter to get box on screen
+                            text=font.render(i.text, True, (255, 255, 255))
+                            scrn.blit(text,(370,260))
+                            if i.text in u_up:
+                                text=font.render('OWNED', True, (255, 255, 255))
+                            elif money>=tree[i.text][4]:
+                                text=font.render('ENTER TO BUY', True, (255, 255, 255))
+                            else:
+                                text=font.render('COSTS '+str(tree[i.text][4]), True, (255, 255, 255))
+                            scrn.blit(text,(300,500))
+                            text=font.render('ESC TO EXIT', True, (255, 255, 255))
+                            scrn.blit(text,(50,50))
+                            pygame.display.flip()
+                            for event in pygame.event.get():
+                                if event.type==pygame.KEYDOWN:
+                                    #if enter clicked
+                                    if event.key==pygame.K_RETURN:
+                                        #return upgrade selected
+                                        u_up.append(i.text)
+                                    #if esc clicked
+                                    if event.key==pygame.K_ESCAPE:
+                                        #break out of loop
+                                        loopa=False
+        return u_up
 
 
 #create class WeaponNPC, subclass of NPC
@@ -241,8 +272,13 @@ class Rewards(NPC):
         font=pygame.font.SysFont('',60)
         typ=random.randint(1,3)
         if typ==1:
-            player.health+=1                                                    #CHECK FOR MAX HEALTH
-            text=font.render('INCREASED HEALTH', True, (255, 255, 255))
+            if player.health<=player.max_health-1:
+                player.health+=1
+                text=font.render('INCREASED HEALTH', True, (255, 255, 255))
+            else:
+                amt=random.randint(5,25)
+            player.money+=amt
+            text=font.render('+'+str(amt)+' MONEY', True, (255, 255, 255))
         elif typ==2:
             amt=random.randint(5,25)
             player.money+=amt
@@ -262,6 +298,7 @@ class Rewards(NPC):
         time.sleep(5)
         return player
 
-pygame.init()
+'''pygame.init()
 screen=pygame.display.set_mode((1000, 1000))
-home(screen,True,sprite_manage.Player)
+bob=UpgradeNPC('bob','unnec')
+bob.speak(screen,1,['+1 HEALTH','+1 HEALTH 2','2X I-FRAMES'],453)'''
