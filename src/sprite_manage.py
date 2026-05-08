@@ -422,7 +422,7 @@ def setup():
                         player.is_attacking = True
                         player.attack_timer = 15
                     if event.button == 2  and player.charge == 4:
-                        player.damage_mod = 3
+                        player.damage_mod = 4
                         player.is_attacking = True
                         player.attack_timer = 15
                         player.super = True
