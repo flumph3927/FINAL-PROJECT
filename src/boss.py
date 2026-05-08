@@ -1,5 +1,6 @@
 import pygame
 import time
+from sprite_manage import *
 
 
 #sprite = (5,15,28,40)
