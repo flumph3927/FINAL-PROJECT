@@ -107,16 +107,10 @@ class HealingRoom:
 
 class Platform:
     def __init__(self,x,y):
-        self.x = x
-        self.y = y
-        self.top = -(self.y)
-        self.bottom = self.y
-        self.left = self.x
-        self.right = -(self.x)
         self.sprite = pygame.image.load("images//Platform.png").convert_alpha()
         self.sprite = pygame.transform.scale(self.sprite,(75,150))
         self.sprite_rect = self.sprite.get_rect()
-        self.sprite_rect.topleft = (self.x, self.y)
+        self.sprite_rect.topleft = (x, y)
 
 
     def draw(self,screen):
@@ -133,7 +127,7 @@ class CombatRoom:
     def generate_platforms(self):
         platforms = []
         def low_platforms():
-            platform_1_y = random.randint(100,300)
+            platform_1_y = random.randint(50,150)
             platform_1 = Platform(300,platform_1_y)
 
             platform_2_y = random.randint(100,300)
