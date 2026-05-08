@@ -49,6 +49,7 @@ class Player(pygame.sprite.Sprite):
         
         #  WEAPON LOADING 
         # Melee (Gauntlet)
+        #Quick fix
         try:
             weapon_sheet = pygame.image.load("images/weapon.png").convert_alpha()
             self.gauntlet_surf = pygame.transform.scale(weapon_sheet.subsurface((60, 180, 130, 90)), (32, 24))
