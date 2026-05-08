@@ -113,7 +113,7 @@ class Platform:
         self.bottom = self.y
         self.left = self.x
         self.right = -(self.x)
-        self.sprite = pygame.image.load("images\\Platform.png").convert_alpha()
+        self.sprite = pygame.image.load("images//Platform.png").convert_alpha()
         self.sprite = pygame.transform.scale(self.sprite,(75,150))
         self.sprite_rect = self.sprite.get_rect()
         self.sprite_rect.topleft = (self.x, self.y)
@@ -180,7 +180,7 @@ class CombatRoom:
 
 
     def draw(self,screen,platforms):
-        bg_image = pygame.image.load("images\\squarecombatroom-pixilart.png").convert_alpha()
+        bg_image = pygame.image.load("images//squarecombatroom-pixilart.png").convert_alpha()
         bg_image = pygame.transform.scale(bg_image,(800,800))
         screen.blit(bg_image,(100,100))
         self.platforms = self.generate_platforms()

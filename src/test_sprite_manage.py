@@ -122,7 +122,7 @@ class Player(pygame.sprite.Sprite):
         else: self.image.set_alpha(255)
 
         # Collsion with generated platforms
-        for plat in platforms:
+        """for plat in platforms:
             if self.rect.colliderect(plat.sprite_rect):
                 if self.rect.y > plat.bottom:
                     self.rect.y = plat.bottom
@@ -134,7 +134,7 @@ class Player(pygame.sprite.Sprite):
                     self.rect.x = plat.left
 
                 if self.rect.x < plat.right:
-                    self.rect.x = plat.right
+                    self.rect.x = plat.right"""
 
     def draw(self, surface):
         surface.blit(self.image, self.rect)
@@ -382,8 +382,9 @@ def setup():
     while running:
         screen.fill((0, 0, 0))
         pygame.draw.rect(screen, (255, 255, 255), (100, 100, 800, 800))
-        room.draw(screen,platforms)
         show_hud(screen, player.health, player.weapon, player.upgrade, player.charge, player.money)
+        room.draw(screen,platforms)
+        
         player.draw(screen)
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
