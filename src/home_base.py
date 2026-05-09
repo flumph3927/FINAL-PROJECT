@@ -1,6 +1,7 @@
 #All home base items, NPC classes, 
 
 import pygame,time,random, miscellaneous, helpers, sprite_manage
+from knockback import knockbackfunc
 
 #create class NPC
 class NPC:
@@ -180,28 +181,112 @@ class WeaponNPC(NPC):
 class TutorialNPC(NPC):
 
     #create function speak, get screen
-    def speak(self,scrn,weapon,upss,money):
+    def speak(self,scrn,player):
         #run function tutorial on screen
-        tutorial(scrn)
-        return upss, weapon, money
+        tutorial(scrn,player)
     
 
 #create function tutorial, get screen
-def tutorial(scrn):
+def tutorial(scrn,player):
     instructions=['Enter to see next instructions','WASD or Arrow Keys to move','W, up arrow, or space to jump','Right click for primary attack','Left click for secondary attack','E to interact','Enter to begin combat tutorial']
     #draw background on screen
-    bg=pygame.transform.scale(pygame.image.load('images/TutorialRoom.png').convert_alpha(),(1000,1000))
-    scrn.blit(bg,(0,0))
+    bg=pygame.transform.scale(pygame.image.load('images/TutorialRoom.png').convert_alpha(),(800,800))
+    font=pygame.font.SysFont('',60)
+    clock=pygame.time.Clock()
     #loop through instructions as instruction
-        #display instruction on screen
-        #until mouse clicked, loop
+    for i in instructions:
+        run=True
+        while run:
+            scrn.blit(bg,(100,100))
+            #display instruction on screen
+            text=font.render(i, True, (255, 255, 255))
+            scrn.blit(text,(200,200))
+            player.update()
+            player.draw(scrn)
+            pygame.display.flip()
+            clock.tick(60)
+            #until enter clicked, loop
+            for event in pygame.event.get():
+                if event.type==pygame.KEYDOWN:
+                    if event.key==pygame.K_RETURN:
+                        run=False
+                    elif event.key==pygame.K_w or event.key==pygame.K_UP or event.key==pygame.K_SPACE:
+                        player.jump()
     #loop:
-        #spawn enemy
+    enemy_bullets = pygame.sprite.Group()
+    player_bullets = pygame.sprite.Group()
+    #spawn enemy
+    enemy=(sprite_manage.Enemy(random.randint(150, 650),300,enemy_type='drone'))
+    step=0
+    run=True
+    while run:
+        scrn.fill((0,0,0))
+        #basically just everything from sprite_manage
+        scrn.blit(bg,(100,100))
+        miscellaneous.show_hud(scrn,player.health,player.weapon,player.upgrades,player.charge,player.money)
+        player.update()
+        player.draw(scrn)
+        enemy.update(player, enemy_bullets)
+        enemy.draw_health_bar(scrn)
+        scrn.blit(enemy.image,enemy.rect)
+        player_bullets.update()
+        enemy_bullets.update()
+        weapon_hitbox = player.draw_active_weapon(scrn)
+        if player.iframes == 0 and player.health > 0:
+            hits = pygame.sprite.spritecollide(player, enemy_bullets, True)
+            for hit in hits:
+                player.health -= 0.5
+                player.iframes = 25
         #if enemy dead: break out of loop
-    #loop:
-        #spawn 3 more enemies
-        #if enemies dead:
-            #return
+        if enemy.health<=0:
+            step+=1
+            enemy.kill()
+            if step==1:
+                enemy=sprite_manage.MeleeEnemy(random.randint(150, 650), player.floor_y)
+            elif step==2:
+                enemy=sprite_manage.RangerEnemy(random.randint(700, 950), 800)
+            elif step==3:
+                return
+        elif player.health<=0:
+            player.health=player.max_health
+            text=font.render('REVIVED FOR TUTORIAL', True, (255, 255, 255))
+            scrn.blit(text,(200,200))
+            pygame.display.flip()
+            time.sleep(5)
+        if weapon_hitbox and weapon_hitbox.colliderect(enemy.rect) and enemy.hit_cooldown == 0:
+            enemy.health -= 1
+            enemy.hit_cooldown = 20
+            knockbackfunc(enemy, None, player)
+        bullet_hits = pygame.sprite.spritecollide(enemy, player_bullets, True)
+        for b in bullet_hits:
+            if player.weapon == 2:
+                enemy.health -= 1
+            else:
+                enemy.health -= 0.5
+        # Damage from melee enemies
+        if isinstance(enemy, sprite_manage.MeleeEnemy):
+            if enemy.rect.colliderect(player.rect):
+                if player.iframes == 0:
+                    player.health -= 1
+                    player.iframes = 25
+        player_bullets.draw(scrn)
+        enemy_bullets.draw(scrn)
+        pygame.display.flip()
+        clock.tick(60)
+        for event in pygame.event.get():
+            if event.type==pygame.KEYDOWN:
+                if event.key==pygame.K_w or event.key==pygame.K_UP or event.key==pygame.K_SPACE:
+                    player.jump()
+            if event.type == pygame.MOUSEBUTTONDOWN and player.health > 0:
+                if event.button == 1:
+                    player.is_attacking = True
+                    player.attack_timer = 15
+                if event.button == 3 and player.shoot_cooldown == 0:
+                    mx, my = pygame.mouse.get_pos()
+                    player.is_shooting = True
+                    player.shoot_timer = 15
+                    player_bullets.add(sprite_manage.Bullet(player.rect.centerx, player.rect.centery, mx, my, 1))
+                    player.shoot_cooldown = 25
 
 #create function home, get scrn, difficulties
 def home(scrn,diffs,player):
@@ -255,7 +340,8 @@ def home(scrn,diffs,player):
                 if event.type==pygame.KEYDOWN:
                     if event.key==pygame.K_e:
                         #run that npc's speak function
-                        player.meta_upgrades, player.weapon,player.money = current.speak(scrn,player.weapon,player.upgrades,player.money)              #CHANGE WHAT iS PASSED TO IT TO META_UPGRADES
+                        if room==3: current.speak(scrn,player)
+                        else: player.meta_upgrades, player.weapon,player.money = current.speak(scrn,player.weapon,player.upgrades,player.money)              #CHANGE WHAT iS PASSED TO IT TO META_UPGRADES
                     elif event.key==pygame.K_w or event.key==pygame.K_UP or event.key==pygame.K_SPACE:
                         player.jump()
             #if user in exit:
@@ -309,4 +395,5 @@ class Rewards(NPC):
 
 '''pygame.init()
 screen=pygame.display.set_mode((1000, 1000))
-home(screen,True,sprite_manage.Player())'''
+#home(screen,True,sprite_manage.Player())
+tutorial(screen,sprite_manage.Player())'''
