@@ -34,7 +34,7 @@ class UpgradeNPC(NPC):
         #loop
         buttons=[]
         for i in tree:
-            buttons.append(miscellaneous.Button(60,60,tree[i][0],i,i,tree[i][1],tree[i][2]))                  #DRAW CURRENCY TOO
+            buttons.append(miscellaneous.Button(60,60,tree[i][0],i,i,tree[i][1],tree[i][2]))
         runb=True
         while runb:
             scrn.fill((0,0,0))
@@ -46,6 +46,11 @@ class UpgradeNPC(NPC):
             font=pygame.font.SysFont('',60)
             text=font.render('ESC TO EXIT', True, (255, 255, 255))
             scrn.blit(text,(50,50))
+            #draw amount of coins
+            coin=pygame.transform.scale(pygame.image.load('images/HudElements.png').convert_alpha().subsurface((200,110,100,100)),(60,60))
+            scrn.blit(coin,(500,20))
+            text=font.render(str(money), True, (255, 255, 255))
+            scrn.blit(text,(560,30))
             #loop through upgrades as upgrade
             for i in buttons:
                 if tree[i.text][3]:
@@ -76,7 +81,7 @@ class UpgradeNPC(NPC):
                             if i.text in u_up:
                                 text=font.render('OWNED', True, (255, 255, 255))
                             elif money>=tree[i.text][4]:
-                                text=font.render('ENTER TO BUY', True, (255, 255, 255))
+                                text=font.render('ENTER TO BUY FOR'+str(tree[i.text][4]), True, (255, 255, 255))
                             else:
                                 text=font.render('COSTS '+str(tree[i.text][4]), True, (255, 255, 255))
                             scrn.blit(text,(300,500))
@@ -87,13 +92,15 @@ class UpgradeNPC(NPC):
                                 if event.type==pygame.KEYDOWN:
                                     #if enter clicked
                                     if event.key==pygame.K_RETURN:
-                                        #return upgrade selected
-                                        u_up.append(i.text)
+                                        if tree[i.text][4]<=money:
+                                            #return upgrade selected
+                                            u_up.append(i.text)
+                                            money-=tree[i.text][4]
                                     #if esc clicked
                                     if event.key==pygame.K_ESCAPE:
                                         #break out of loop
                                         loopa=False
-        return u_up
+        return u_up,wpn,money
 
 
 #create class WeaponNPC, subclass of NPC
@@ -210,9 +217,14 @@ def home(scrn,diffs,player):
                     hard=helpers.Button(200,100,(100,100,100),(150,150,150),'HARDMODE',200,400)
                     easy=helpers.Button(200,100,(100,100,100),(150,150,150),'NORMAL',600,400)
                     #if difficulty clicked: return difficulty level
-                    for event in pygame.event.get():
-                        if hard.is_pressed(event): return True
-                        elif easy.is_pressed(event): return False
+                    while True:
+                        scrn.fill((0,0,0))
+                        hard.draw(scrn)
+                        easy.draw(scrn)
+                        pygame.display.flip()
+                        for event in pygame.event.get():
+                            if hard.is_clicked(event): return True
+                            elif easy.is_clicked(event): return False
                 else: return False
         #show room background on 
         npc_images=pygame.image.load('images/NPC.png').convert_alpha()
@@ -220,10 +232,7 @@ def home(scrn,diffs,player):
         #if room is first:
         if room==1:
             bg=pygame.transform.scale(pygame.image.load('images/MetaUpgradesRoom.png').convert_alpha(),(800,800))
-            #show upgrades npc on scrn
-            #current=UpgradeNPC() # WE NEED TO ADD THE UPGRADE NPC
-            room+=1
-            continue
+            current=UpgradeNPC('UPGRADES (E)',pygame.transform.scale(npc_images.subsurface((50,180,130,200)),(100,160)))
         #elif room 2: #show weapons npc on scrn
         elif room==2:
             bg=pygame.transform.scale(pygame.image.load('images/WeaponsRoom.png').convert_alpha(),(800,800))
@@ -300,5 +309,4 @@ class Rewards(NPC):
 
 '''pygame.init()
 screen=pygame.display.set_mode((1000, 1000))
-bob=UpgradeNPC('bob','unnec')
-bob.speak(screen,1,['+1 HEALTH','+1 HEALTH 2','2X I-FRAMES'],453)'''
+home(screen,True,sprite_manage.Player())'''
