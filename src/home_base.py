@@ -228,10 +228,10 @@ def tutorial(scrn,player):
         player.draw(scrn)
         enemy.update(player, enemy_bullets)
         enemy.draw_health_bar(scrn)
-        screen.blit(enemy.image,enemy.rect)
+        scrn.blit(enemy.image,enemy.rect)
         player_bullets.update()
         enemy_bullets.update()
-        weapon_hitbox = player.draw_active_weapon(screen)
+        weapon_hitbox = player.draw_active_weapon(scrn)
         if player.iframes == 0 and player.health > 0:
             hits = pygame.sprite.spritecollide(player, enemy_bullets, True)
             for hit in hits:
@@ -269,8 +269,8 @@ def tutorial(scrn,player):
                 if player.iframes == 0:
                     player.health -= 1
                     player.iframes = 25
-        player_bullets.draw(screen)
-        enemy_bullets.draw(screen)
+        player_bullets.draw(scrn)
+        enemy_bullets.draw(scrn)
         pygame.display.flip()
         clock.tick(60)
         for event in pygame.event.get():
