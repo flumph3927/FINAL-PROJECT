@@ -65,12 +65,7 @@ class Player(pygame.sprite.Sprite):
         except:
             self.gun_surf = pygame.Surface((32, 16)); self.gun_surf.fill((100, 100, 100))
 
-
-
-
-
-
-                ###########Have variable file path############
+        ###########Have variable file path############
         self.user_data = load_game(file_path="documents/savefile_one.csv")
         self.max_health = 5.0 * float(self.user_data["health_mod"])
         self.damage_mod = float(self.user_data["damage_mod"]) ##########Implement at each damge use #############
@@ -97,11 +92,6 @@ class Player(pygame.sprite.Sprite):
         self.meta_upgrades = self.user_data['upgrades']
         self.boss_drops = self.user_data["boss_drops"]
         self.upgrades = []
-
-
-
-
-
 
     def jump(self):
         if not self.is_jumping:
@@ -132,8 +122,6 @@ class Player(pygame.sprite.Sprite):
                 self.is_jumping = False
             elif self.rect.y >= self.floor_y:
                 self.rect.y, self.y_velocity, self.is_jumping = self.floor_y, 0, False
-
-
 
         # Timers
         if self.attack_timer > 0: self.attack_timer -= 1
@@ -199,9 +187,6 @@ class Enemy(pygame.sprite.Sprite):
     def __init__(self, x, y, enemy_type='drone'):
         super().__init__()
 
-
-
-
         if enemy_type=='drone':
             try:
                 img = pygame.image.load("images/spritesheet_2.png")
@@ -212,8 +197,6 @@ class Enemy(pygame.sprite.Sprite):
         if enemy_type == 'melee':
             img = pygame.image.load("image/spritesheet_2.png")
             self.image = pygame.transform.scale(img.subsurface((60, 190, 97, 130)), (30,30))
-
-
 
         self.rect = self.image.get_rect(topleft=(x, y))
         self.speed, self.health = 2, 5
@@ -263,16 +246,11 @@ class MeleeEnemy(pygame.sprite.Sprite):
         super().__init__()
         img = pygame.image.load("images/spritesheet_2.png")
         self.image = pygame.transform.scale(img.subsurface((65, 150, 130, 170)), (30,40))
-    
         self.rect = self.image.get_rect(topleft=(x, y))
         self.speed = 3
         self.health = 3.1
         self.max_health = self.health
         self.hit_cooldown, self.attack_cooldown = 0, 0
-
-
-
-
 
     def update(self, target, enemy_bullets):
         if target.health <= 0:
@@ -295,62 +273,79 @@ class MeleeEnemy(pygame.sprite.Sprite):
         if self.health > 0:
             pygame.draw.rect(surf, (0, 255, 0), (self.rect.x, self.rect.y - 10, (self.health / self.max_health) * 30, 5))
 
-# New RangerEnemy class
+# New RangerEnemy class with improved collision handling
 class RangerEnemy(pygame.sprite.Sprite):
     def __init__(self, x, y):
         super().__init__()
- 
         img = pygame.image.load("images/spritesheet_2.png")
         self.image = pygame.transform.scale(img.subsurface((365, 150, 130, 170)), (30,40))
-       
         self.rect = self.image.get_rect(topleft=(x, y))
         self.speed = 3
         self.health = 4
         self.max_health = self.health
         self.state = 'attack'
-        self.move_left_bound = 150  # keep within map bounds
+        self.move_left_bound = 150
         self.move_right_bound = 850
-        self.y = y  # fixed y position
+        self.y = y
         self.shoot_cooldown = 0
         self.hit_cooldown = 0
 
-    def update(self, target, enemy_bullets):
+    def update(self, target, enemy_bullets, all_rangers):
         self.rect.y = self.y
-        # Check boundaries and switch direction if needed
-        if self.rect.centerx <= self.move_left_bound:
-            self.rect.centerx = self.move_left_bound
-            # Dash to the right
-            self.rect.x += 50  # dash move
-        elif self.rect.centerx >= self.move_right_bound:
-            self.rect.centerx = self.move_right_bound
-            # Dash to the left
-            self.rect.x -= 50  # dash move
+
+        # Store original position
+        original_x = self.rect.x
 
         # Move within bounds
+        if self.rect.centerx <= self.move_left_bound:
+            self.rect.centerx = self.move_left_bound
+            self.rect.x += 50
+        elif self.rect.centerx >= self.move_right_bound:
+            self.rect.centerx = self.move_right_bound
+            self.rect.x -= 50
+
+        # Move towards/away from player
         dx = target.rect.centerx - self.rect.centerx
         dist_x = abs(dx)
 
-        # If player is very close, dash away
         if dist_x < 200:
             if self.rect.centerx > self.move_left_bound:
                 self.rect.x -= self.speed
             elif self.rect.centerx < self.move_right_bound:
                 self.rect.x += self.speed
         else:
-            # Follow boundaries
             if self.rect.centerx < self.move_left_bound:
                 self.rect.x += self.speed
             elif self.rect.centerx > self.move_right_bound:
                 self.rect.x -= self.speed
 
-        # Shoot at player with "infinite range" (no range limit, just shoot when in range)
+        # Save position before checking collisions
+        prev_x = self.rect.x
+
+        # Check for collisions with other ranger enemies
+        collided_rangers = [r for r in all_rangers if r != self and self.rect.colliderect(r.rect)]
+        if collided_rangers:
+            # Revert to previous position to avoid overlapping
+            self.rect.x = prev_x
+            # Optional: move away slightly
+            for r in collided_rangers:
+                if self.rect.centerx < r.rect.centerx:
+                    self.rect.x -= self.speed
+                else:
+                    self.rect.x += self.speed
+
+        # Keep within bounds after collision resolution
+        if self.rect.left < self.move_left_bound:
+            self.rect.left = self.move_left_bound
+        if self.rect.right > self.move_right_bound:
+            self.rect.right = self.move_right_bound
+
+        # Shoot at player with "infinite range"
         if self.shoot_cooldown == 0:
             dy = target.rect.centery - self.rect.centery
-            # Shoot if within a certain range
             dx_total = target.rect.centerx - self.rect.centerx
             dist = math.hypot(dx_total, dy)
-            if dist < 600:  # large range
-                # Fire bullet toward player
+            if dist < 600:
                 enemy_bullets.add(Bullet(self.rect.centerx, self.rect.centery, target.rect.centerx, target.rect.centery, damage=1, color=(0, 0, 250)))
                 self.shoot_cooldown = 90
         else:
@@ -379,7 +374,6 @@ def setup():
             enemy_type_list.append('melee')
         else:
             enemy_type_list.append('ranger')
-    #enemy_type_list = ['drone', 'melee', 'ranger', 'drone', 'melee', 'ranger']
     # Count how many of each type
     drone_count = enemy_type_list.count('drone')
     melee_count = enemy_type_list.count('melee')
@@ -446,9 +440,15 @@ def setup():
                         player.is_attacking = True
                         player.attack_timer = 15
 
-        # Update logica
+        # Update logic
         player.update()
-        enemies.update(player, enemy_bullets)
+        # List of ranger enemies
+        ranger_enemies = [enemy for enemy in enemies if isinstance(enemy, RangerEnemy)]
+        for enemy in list(enemies):
+            if isinstance(enemy, RangerEnemy):
+                enemy.update(player, enemy_bullets, ranger_enemies)
+            else:
+                enemy.update(player, enemy_bullets)
         player_bullets.update()
         enemy_bullets.update()
 
@@ -506,7 +506,3 @@ def setup():
     pygame.quit()
 
 setup()
-
-
-
-#COLOR rgb(156, 90, 60)
