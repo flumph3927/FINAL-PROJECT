@@ -17,9 +17,15 @@ clock = pygame.time.Clock()
 class Bullet(pygame.sprite.Sprite):
     def __init__(self, x, y, target_x, target_y, damage, color=(255, 200, 0)):
         super().__init__()
-        self.image = pygame.Surface((8, 8))
+        player = Player()
+        if player.super == True:
+            self.image = pygame.Surface((48,16))
+        else:
+            self.image = pygame.Surface((8, 8))
+        
         if color == (0,0,250):
             self.image = pygame.Surface((24, 8))
+        
         self.image.fill(color)
         self.rect = self.image.get_rect(center=(x, y))
         self.damage = damage
@@ -82,7 +88,7 @@ class Player(pygame.sprite.Sprite):
         self.is_shooting, self.shoot_timer = False, 0
         self.shoot_cooldown = 0
         self.weapon_choices = self.user_data["weapons"] #########Check this when switching weapon ###########
-        self.weapon = 1
+        self.weapon = 2
         self.charge = 0
         self.money = 0
         self.super = False
@@ -410,35 +416,49 @@ def setup():
                     if event.key in [pygame.K_UP, pygame.K_w, pygame.K_SPACE]:
                         player.jump()
 
+
+            ##################DUPLICATE THIS TO ALLOW FOR THE SUPER TO BE CAST BY PRESSING U######################
             if player.weapon == 1:
-                if event.type == pygame.MOUSEBUTTONDOWN and player.health > 0:
-                    if event.button == 1:
-                        player.is_attacking = True
-                        player.attack_timer = 15
-                    if event.button == 2  and player.charge == 4:
-                        player.damage_mod = 4
-                        player.is_attacking = True
-                        player.attack_timer = 15
-                        player.super = True
-                        player.charge = 0
-                    if event.button == 3 and player.shoot_cooldown == 0:
-                        mx, my = pygame.mouse.get_pos()
-                        player.is_shooting = True
-                        player.shoot_timer = 15
-                        player_bullets.add(Bullet(player.rect.centerx, player.rect.centery, mx, my, 1*player.damage_mod))
-                        player.shoot_cooldown = 15
+                if event.type == pygame.MOUSEBUTTONDOWN:  
+                    if player.health > 0:
+                        if event.button == 1:
+                            player.is_attacking = True
+                            player.attack_timer = 15
+                        if event.button == 2:
+                            if player.charge == 4:
+                                player.damage_mod = 4
+                                player.is_attacking = True
+                                player.attack_timer = 15
+                                player.super = True
+                                player.charge = 0
+                        if event.button == 3 and player.shoot_cooldown == 0:
+                            mx, my = pygame.mouse.get_pos()
+                            player.is_shooting = True
+                            player.shoot_timer = 15
+                            player_bullets.add(Bullet(player.rect.centerx, player.rect.centery, mx, my, 1*player.damage_mod))
+                            player.shoot_cooldown = 15
 
             if player.weapon == 2:
-                if event.type == pygame.MOUSEBUTTONDOWN and player.health > 0:
-                    if event.button == 1:
-                        mx, my = pygame.mouse.get_pos()
-                        player.is_shooting = True
-                        player.shoot_timer = 15
-                        player_bullets.add(Bullet(player.rect.centerx, player.rect.centery, mx, my, 2*player.damage_mod))
-                        player.shoot_cooldown = 25
-                    if event.button == 3 and player.shoot_cooldown == 0:
-                        player.is_attacking = True
-                        player.attack_timer = 15
+                if event.type == pygame.MOUSEBUTTONDOWN:  
+                    if player.health > 0:
+                        if event.button == 1:
+                            mx, my = pygame.mouse.get_pos()
+                            player.is_shooting = True
+                            player.shoot_timer = 15
+                            player_bullets.add(Bullet(player.rect.centerx, player.rect.centery, mx, my, 2*player.damage_mod))
+                            player.shoot_cooldown = 25
+                        if event.button == 2:
+                            if player.charge == 4:
+                                player.damage_mod = 4
+                                player.is_shooting = True
+                                player.shoot_timer = 15
+                                player.super = True
+                                player_bullets.add(Bullet(player.rect.centerx, player.rect.centery, mx, my, 2*player.damage_mod))
+                                player.shoot_cooldown = 15
+                                player.charge = 0
+                        if event.button == 3 and player.shoot_cooldown == 0:
+                            player.is_attacking = True
+                            player.attack_timer = 15
 
         # Update logic
         player.update()
