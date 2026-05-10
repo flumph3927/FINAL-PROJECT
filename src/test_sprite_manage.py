@@ -37,7 +37,7 @@ class Player(pygame.sprite.Sprite):
         super().__init__()
         # Load Player Sprite
         try:
-            sprite_sheet = pygame.image.load('images/spritesheet.webp').convert_alpha()
+            sprite_sheet = pygame.image.load('images//spritesheet.webp').convert_alpha()
             self.image_original = pygame.transform.scale(sprite_sheet.subsurface((35, 159, 125, 200)), (25, 40))
         except:
             self.image_original = pygame.Surface((25, 40)); self.image_original.fill((0, 0, 255))
@@ -48,7 +48,7 @@ class Player(pygame.sprite.Sprite):
         #  WEAPON LOADING 
         # Melee (Gauntlet)
         try:
-            weapon_sheet = pygame.image.load("images/weapon.png").convert_alpha()
+            weapon_sheet = pygame.image.load("images//weapon.png").convert_alpha()
             self.gauntlet_surf = pygame.transform.scale(weapon_sheet.subsurface((60, 180, 130, 90)), (32, 24))
             self.gauntlet_surf = pygame.transform.rotate(self.gauntlet_surf, -90)
         except:
@@ -56,7 +56,7 @@ class Player(pygame.sprite.Sprite):
 
         # Ranged (Gun from your image)
         try:
-            gun_sheet = pygame.image.load("images/gun_sprite.png").convert_alpha()
+            gun_sheet = pygame.image.load("images//gun_sprite.png").convert_alpha()
             self.gun_surf = pygame.transform.scale(gun_sheet.subsurface((37, 14, 12, 25)), (40, 40))
             self.gun_surf = pygame.transform.rotate(self.gun_surf, -25)
         except:
@@ -96,7 +96,7 @@ class Player(pygame.sprite.Sprite):
         pixel_x = self.rect.centerx
         pixel_y = self.rect.bottom + 1  # pixel just below the sprite
         # Ensure the point is within screen bounds
-        if 0 <= pixel_x < screen.get_width() and 0 <= pixel_y < screen.get_height():
+        if 0 <= pixel_x < screen.get_width() + 100 and 0 <= pixel_y < screen.get_height() + 100: # Note: the "+ 100"s on the end of the x and y checks are only experimental. Due to macbooks being stupid, I am unable to properly test if this quick fix will work. - Queverity
             pixel_color = screen.get_at((int(pixel_x), int(pixel_y)))[:3]
             if pixel_color == (156, 90, 60):
                 # Stop falling
@@ -105,6 +105,9 @@ class Player(pygame.sprite.Sprite):
                 self.is_jumping = False
             elif self.rect.y >= self.floor_y:
                 self.rect.y, self.y_velocity, self.is_jumping = self.floor_y, 0, False
+
+        # Check for the color at the top of the sprite
+        top_y = self.rect.bottom - 1
 
         # Timers
         if self.attack_timer > 0: self.attack_timer -= 1
@@ -122,19 +125,19 @@ class Player(pygame.sprite.Sprite):
         else: self.image.set_alpha(255)
 
         # Collsion with generated platforms
-        """for plat in platforms:
+        for plat in platforms:
             if self.rect.colliderect(plat.sprite_rect):
-                if self.rect.y > plat.bottom:
-                    self.rect.y = plat.bottom
+                if self.rect.y > plat.sprite_rect.bottom - 60:
+                    self.rect.top = plat.sprite_rect.bottom - 60
                 
-                if self.rect.y < plat.top:
-                    self.rect.y = plat.top
+                if self.rect.y < plat.sprite_rect.top + 60:
+                   self.rect.bottom = plat.sprite_rect.top + 60
 
-                if self.rect.x > plat.left:
-                    self.rect.x = plat.left
+                if self.rect.x > plat.sprite_rect.left:
+                    self.rect.right = plat.sprite_rect.left
 
-                if self.rect.x < plat.right:
-                    self.rect.x = plat.right"""
+                if self.rect.x < plat.sprite_rect.right:
+                    self.rect.left = plat.sprite_rect.right
 
     def draw(self, surface):
         surface.blit(self.image, self.rect)
