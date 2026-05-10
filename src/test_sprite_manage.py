@@ -96,7 +96,7 @@ class Player(pygame.sprite.Sprite):
         pixel_x = self.rect.centerx
         pixel_y = self.rect.bottom + 1  # pixel just below the sprite
         # Ensure the point is within screen bounds
-        if 0 <= pixel_x < screen.get_width() and 0 <= pixel_y < screen.get_height():
+        if 0 <= pixel_x < screen.get_width() + 100 and 0 <= pixel_y < screen.get_height() + 100: # Note: the "+ 100"s on the end of the x and y checks are only experimental. Due to macbooks being stupid, I am unable to properly test if this quick fix will work. - Queverity
             pixel_color = screen.get_at((int(pixel_x), int(pixel_y)))[:3]
             if pixel_color == (156, 90, 60):
                 # Stop falling
