@@ -107,10 +107,10 @@ class HealingRoom:
 
 class Platform:
     def __init__(self,x,y):
-        self.sprite = pygame.image.load("images//Platform.png").convert_alpha()
+        self.sprite = pygame.image.load("images\\NewPlatform.png").convert_alpha()
         self.sprite = pygame.transform.scale(self.sprite,(75,150))
-        self.sprite_rect = self.sprite.get_rect()
-        self.sprite_rect.topleft = (x, y)
+        self.sprite_rect = pygame.Rect(x,y,100,30)
+
 
 
     def draw(self,screen):
