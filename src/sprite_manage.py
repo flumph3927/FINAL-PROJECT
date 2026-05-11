@@ -17,8 +17,7 @@ clock = pygame.time.Clock()
 class Bullet(pygame.sprite.Sprite):
     def __init__(self, x, y, target_x, target_y, damage, color=(255, 200, 0)):
         super().__init__()
-        player = Player()
-        if player.super == True:
+        if color == (0,0,225):
             self.image = pygame.Surface((48,16))
         else:
             self.image = pygame.Surface((8, 8))
@@ -30,6 +29,8 @@ class Bullet(pygame.sprite.Sprite):
         self.rect = self.image.get_rect(center=(x, y))
         self.damage = damage
         self.speed = 7 if color == (255, 0, 0) else 12  # Enemy bullets are slower
+        if color == (0,0,225):
+            self.damage = 10
         angle = math.atan2(target_y - y, target_x - x)
         self.dx = math.cos(angle) * self.speed
         self.dy = math.sin(angle) * self.speed
@@ -88,7 +89,7 @@ class Player(pygame.sprite.Sprite):
         self.is_shooting, self.shoot_timer = False, 0
         self.shoot_cooldown = 0
         self.weapon_choices = self.user_data["weapons"] #########Check this when switching weapon ###########
-        self.weapon = 2
+        self.weapon = 1
         self.charge = 0
         self.money = 0
         self.super = False
@@ -365,6 +366,7 @@ class RangerEnemy(pygame.sprite.Sprite):
 #  MAIN ENGINE 
 
 def setup():
+    super_fix = False
     player = Player()
     enemies = pygame.sprite.Group()
     player_bullets = pygame.sprite.Group()
@@ -448,12 +450,14 @@ def setup():
                             player_bullets.add(Bullet(player.rect.centerx, player.rect.centery, mx, my, 2*player.damage_mod))
                             player.shoot_cooldown = 25
                         if event.button == 2:
-                            if player.charge == 4:
+                            if player.charge >= 4:
+                                player.super = True
+                                super_fix = True
                                 player.damage_mod = 4
+                                mx, my = pygame.mouse.get_pos()
                                 player.is_shooting = True
                                 player.shoot_timer = 15
-                                player.super = True
-                                player_bullets.add(Bullet(player.rect.centerx, player.rect.centery, mx, my, 2*player.damage_mod))
+                                player_bullets.add(Bullet(player.rect.centerx, player.rect.centery, mx, my, 8, (0,0, 225)))
                                 player.shoot_cooldown = 15
                                 player.charge = 0
                         if event.button == 3 and player.shoot_cooldown == 0:
@@ -489,8 +493,12 @@ def setup():
 
             bullet_hits = pygame.sprite.spritecollide(enemy, player_bullets, True)
             for b in bullet_hits:
-                if player.weapon == 2:
+                if player.weapon == 2 and player.super != True and super_fix != True:
                     enemy.health -= 1*player.damage_mod
+                    print("d")
+                elif player.weapon == 2 and super_fix == True:
+                    enemy.health -= Bullet().damage
+                    
                 else:
                     enemy.health -= 0.5*player.damage_mod
 
@@ -514,7 +522,9 @@ def setup():
             player.fix+=1
             if player.fix == 2:
                 player.damage_mod = float(player.user_data["damage_mod"])
-                player.fix == 1
+                player.fix == 0
+                player.super = False
+                super_fix = False
 
         # Draw bullets
         player_bullets.draw(screen)
