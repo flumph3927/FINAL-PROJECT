@@ -20,10 +20,6 @@ class NPC:
         scrn.blit(text,(coords[0],coords[1]-40))
 
 
-
-#OOF=miscellaneous.Button(width,height,image,returns,text,x,y)
-
-
 #create class UpgradeNPC, subclass of NPC
 class UpgradeNPC(NPC):
 
@@ -45,6 +41,8 @@ class UpgradeNPC(NPC):
                     i.draw(scrn)
             #place esc to exit message in corner
             font=pygame.font.SysFont('',60)
+            text=font.render('UPGRADE TREE',True, (255, 255, 255))
+            scrn.blit(text,(350,150))
             text=font.render('ESC TO EXIT', True, (255, 255, 255))
             scrn.blit(text,(50,50))
             #draw amount of coins
@@ -97,6 +95,7 @@ class UpgradeNPC(NPC):
                                             #return upgrade selected
                                             u_up.append(i.text)
                                             money-=tree[i.text][4]
+                                            loopa=False
                                     #if esc clicked
                                     if event.key==pygame.K_ESCAPE:
                                         #break out of loop
@@ -126,6 +125,16 @@ class WeaponNPC(NPC):
             scrn.blit(shown,(470,400))
             #place esc to exit in corner of screen
             font=pygame.font.SysFont('',60)
+            text=font.render('WEAPON SELECT',True, (255, 255, 255))
+            scrn.blit(text,(330,150))
+            text=font.render('SELECTED WEAPON:',True, (255, 255, 255))
+            scrn.blit(text,(300,300))
+            if selected==1:
+                text=font.render('GAUNTLET',True, (255, 255, 255))
+                scrn.blit(text,(400,350))
+            else:
+                text=font.render('M1 GARAND',True, (255, 255, 255))
+                scrn.blit(text,(380,350))
             text=font.render('ESC TO EXIT', True, (255, 255, 255))
             scrn.blit(text,(50,50))
             pygame.display.flip()
@@ -226,7 +235,9 @@ def tutorial(scrn,player):
         miscellaneous.show_hud(scrn,player.health,player.weapon,player.upgrades,player.charge,player.money)
         player.update()
         player.draw(scrn)
-        enemy.update(player, enemy_bullets)
+        if step==2:
+            enemy.update(player,enemy_bullets,pygame.sprite.Group())
+        else:enemy.update(player, enemy_bullets)
         enemy.draw_health_bar(scrn)
         scrn.blit(enemy.image,enemy.rect)
         player_bullets.update()
@@ -328,6 +339,7 @@ def home(scrn,diffs,player):
             current=TutorialNPC('TUTORIAL (E)',pygame.transform.scale(npc_images.subsurface((880,180,130,200)),(100,160)))
         run=True
         while run:
+            scrn.fill((0,0,0))
             miscellaneous.show_hud(scrn,player.health,player.weapon,player.upgrades,player.charge,player.money)
             scrn.blit(bg,(100,100))
             current.show(scrn,(300,678))
@@ -341,7 +353,7 @@ def home(scrn,diffs,player):
                     if event.key==pygame.K_e:
                         #run that npc's speak function
                         if room==3: current.speak(scrn,player)
-                        else: player.meta_upgrades, player.weapon,player.money = current.speak(scrn,player.weapon,player.upgrades,player.money)              #CHANGE WHAT iS PASSED TO IT TO META_UPGRADES
+                        else: player.meta_upgrades, player.weapon,player.money = current.speak(scrn,player.weapon,player.meta_upgrades,player.money)
                     elif event.key==pygame.K_w or event.key==pygame.K_UP or event.key==pygame.K_SPACE:
                         player.jump()
             #if user in exit:
@@ -392,8 +404,3 @@ class Rewards(NPC):
         pygame.display.flip()
         time.sleep(5)
         return player
-
-'''pygame.init()
-screen=pygame.display.set_mode((1000, 1000))
-#home(screen,True,sprite_manage.Player())
-tutorial(screen,sprite_manage.Player())'''

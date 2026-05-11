@@ -35,7 +35,7 @@ def main_loop():
     pygame.init()
 
     # create screen, setup all basic surfaces and other stuff
-    screen = pygame.Surface((1000,1000))
+    screen = pygame.display.set_mode((1000,1000))
     
     while True:
         screen.fill((255,255,255))
