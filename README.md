@@ -13,6 +13,7 @@ Decypher is a rougelite game based around a robot, named Cypher.
 ***
 - Able to save and load
 -  Has meta progression
+- Has multiple weapons and upgrades
 
 ## Contributors
 ***
