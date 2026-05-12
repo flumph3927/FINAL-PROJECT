@@ -4,11 +4,13 @@ import random
 from knockback import knockbackfunc
 from miscellaneous import *
 from room_classes import *
+from home_base import *
 
 #  INITIAL SETUP 
 num_enemies = 0
 
 pygame.init()
+
 screen = pygame.display.set_mode((1000, 1000))
 clock = pygame.time.Clock()
 
@@ -360,11 +362,7 @@ class RangerEnemy(pygame.sprite.Sprite):
 
 #  MAIN ENGINE 
 
-def setup():
-    player = Player()
-    enemies = pygame.sprite.Group()
-    player_bullets = pygame.sprite.Group()
-    enemy_bullets = pygame.sprite.Group()
+def setup(player,enemies,player_bullets,enemy_bullets):
 
     # List containing enemy types to spawn
     enemy_type_list = []
@@ -448,7 +446,7 @@ def setup():
                         player.is_attacking = True
                         player.attack_timer = 15
 
-        # Update logica
+        # Update logic
         player.update(platforms)
         enemies.update(player, enemy_bullets)
         player_bullets.update()
@@ -492,6 +490,15 @@ def setup():
                 screen.blit(enemy.image, enemy.rect)
                 enemy.draw_health_bar(screen)
 
+        if bool(enemies) == False:
+            reward = Rewards("Reward","images\\RewardChest.png")
+            reward.show(screen,450)
+            reward.speak(screen,player)
+
+        if player.rect.x in range(850,900) and bool(enemies) == False:
+            print("This would generate the next room if it actually worked")
+            break
+
         # Draw bullets
         player_bullets.draw(screen)
         enemy_bullets.draw(screen)
@@ -500,6 +507,4 @@ def setup():
         clock.tick(60)
 
     pygame.quit()
-
-setup()
 #COLOR rgb(156, 90, 60)s

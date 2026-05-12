@@ -104,6 +104,7 @@ class HealingRoom:
 
     # def draw():
         # load the platform sprite at the location set
+pygame.init()
 
 class Platform:
     def __init__(self,x,y):
