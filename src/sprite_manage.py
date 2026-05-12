@@ -89,7 +89,8 @@ class Player(pygame.sprite.Sprite):
         self.is_shooting, self.shoot_timer = False, 0
         self.shoot_cooldown = 0
         self.weapon_choices = self.user_data["weapons"] #########Check this when switching weapon ###########
-        self.weapon = 2
+        self.weapon = 1
+        self.max_charge = 4
         self.charge = 0
         self.money = 0
         self.fix = 0
@@ -364,7 +365,12 @@ class RangerEnemy(pygame.sprite.Sprite):
 
 #  MAIN ENGINE 
 
+# 0 increases health
+#1 damage
+#2 equals charge
+
 def setup():
+    
     supper = False
     player = Player()
     enemies = pygame.sprite.Group()
@@ -406,6 +412,16 @@ def setup():
         pygame.draw.rect(screen, (255, 255, 255), (100, 100, 800, 800))
         show_hud(screen, player.health, player.weapon, player.upgrades, player.charge, player.money)
         player.draw(screen)
+        for i in player.upgrades:
+            if i == 0:
+                player.max_health += 1
+                player.health = player.max_health
+            elif i == 1:
+                player.damage_mod += 1
+            elif i == 2:
+                player.max_charge -= 1
+            else:
+                pass
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 running = False
@@ -426,7 +442,7 @@ def setup():
                             player.is_attacking = True
                             player.attack_timer = 15
                         if event.button == 2:
-                            if player.charge == 4:
+                            if player.charge >= player.max_charge:
                                 player.damage_mod = 4
                                 player.is_attacking = True
                                 player.attack_timer = 15
@@ -446,10 +462,10 @@ def setup():
                             mx, my = pygame.mouse.get_pos()
                             player.is_shooting = True
                             player.shoot_timer = 15
-                            player_bullets.add(Bullet(player.rect.centerx, player.rect.centery, mx, my, 2*player.damage_mod))
+                            player_bullets.add(Bullet(player.rect.centerx, player.rect.centery, mx, my, 2*player.damage_mod, (192, 192, 192)))
                             player.shoot_cooldown = 25
                         if event.button == 2:
-                            if player.charge >= 4:
+                            if player.charge >= player.max_charge:
                                 supper = True
                                 mx, my = pygame.mouse.get_pos()
                                 player.is_shooting = True
@@ -490,14 +506,14 @@ def setup():
 
             bullet_hits = pygame.sprite.spritecollide(enemy, player_bullets, True)
             for b in bullet_hits:
-                enemy.health -= b.damage
+                enemy.health -= b.damage*player.damage_mod
 
             # Damage from melee enemies
             if isinstance(enemy, MeleeEnemy):
                 if enemy.rect.colliderect(player.rect):
                     if player.iframes == 0:
                         player.health -= 1
-                        player.iframes = 25
+                        player.iframes = 25*player.iframes_mod
 
             # Draw enemy if alive
             if enemy.health <= 0:
@@ -522,7 +538,13 @@ def setup():
 
         pygame.display.flip()
         clock.tick(60)
-
-    pygame.quit()
+    print("how")
 
 setup()
+
+
+####Fix meta upgrades####
+
+####Get rid of the freezing and red outline, and instead send them to main#########
+
+####Fix Ranger bug####
