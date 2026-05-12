@@ -17,21 +17,23 @@ clock = pygame.time.Clock()
 class Bullet(pygame.sprite.Sprite):
     def __init__(self, x, y, target_x, target_y, damage, color=(255, 200, 0)):
         super().__init__()
-        if color == (0,0,225):
-            self.image = pygame.Surface((48,16))
+        if color == (0, 0, 225):
+            self.image = pygame.Surface((48, 16), pygame.SRCALPHA)
+        elif color == (0, 0, 250):
+            self.image = pygame.Surface((24, 8), pygame.SRCALPHA)
         else:
-            self.image = pygame.Surface((8, 8))
-        
-        if color == (0,0,250):
-            self.image = pygame.Surface((24, 8))
-        
+            self.image = pygame.Surface((8, 8), pygame.SRCALPHA)
+
         self.image.fill(color)
-        self.rect = self.image.get_rect(center=(x, y))
         self.damage = damage
-        self.speed = 7 if color == (255, 0, 0) else 12  # Enemy bullets are slower
+        self.speed = 10 if color == (255, 0, 0) else 14  # Enemy bullets are slower
         angle = math.atan2(target_y - y, target_x - x)
         self.dx = math.cos(angle) * self.speed
         self.dy = math.sin(angle) * self.speed
+
+        if self.image.get_width() != self.image.get_height():
+            self.image = pygame.transform.rotate(self.image, -math.degrees(angle))
+        self.rect = self.image.get_rect(center=(x, y))
 
     def update(self):
         self.rect.x += self.dx
@@ -78,7 +80,7 @@ class Player(pygame.sprite.Sprite):
         
 
         # Stats
-        self.speed, self.floor_y, self.y_velocity = 5, 860, 0
+        self.speed, self.floor_y, self.y_velocity = 8, 860, 0
         self.gravity, self.jump_strength = 0.8, -16.5
         self.health = self.max_health
         self.iframes = 0
