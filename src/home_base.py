@@ -404,3 +404,10 @@ class Rewards(NPC):
         pygame.display.flip()
         time.sleep(5)
         return player
+    
+    def show(self,scrn,coords):
+        #place img on screen with button to speak message below it and name above it on screen
+        scrn.blit("images\\RewardChest.png",coords)
+        font=pygame.font.SysFont('',60)
+        text=font.render(self.name, True, (255, 255, 255))
+        scrn.blit(text,(coords[0],coords[1]-40))
