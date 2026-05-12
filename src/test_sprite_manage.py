@@ -64,7 +64,7 @@ class Player(pygame.sprite.Sprite):
 
         # Stats
         self.speed, self.floor_y, self.y_velocity = 5, 800, 0
-        self.gravity, self.jump_strength = 0.8, -16.5
+        self.gravity, self.jump_strength = 0.8, -20
         self.health = 5.0
         self.iframes = 0
         self.is_jumping = False
@@ -96,18 +96,42 @@ class Player(pygame.sprite.Sprite):
         pixel_x = self.rect.centerx
         pixel_y = self.rect.bottom + 1  # pixel just below the sprite
         # Ensure the point is within screen bounds
-        if 0 <= pixel_x < screen.get_width() + 100 and 0 <= pixel_y < screen.get_height() + 100: # Note: the "+ 100"s on the end of the x and y checks are only experimental. Due to macbooks being stupid, I am unable to properly test if this quick fix will work. - Queverity
+        """if 0 <= pixel_x < screen.get_width() + 100 and 0 <= pixel_y < screen.get_height() - 100: # Note: the "+ 100"s on the end of the x and y checks are only experimental. Due to macbooks being stupid, I am unable to properly test if this quick fix will work. - Queverity
             pixel_color = screen.get_at((int(pixel_x), int(pixel_y)))[:3]
             if pixel_color == (156, 90, 60):
-                # Stop falling
-                self.rect.y = pixel_y - self.rect.height
-                self.y_velocity = 0
-                self.is_jumping = False
-            elif self.rect.y >= self.floor_y:
-                self.rect.y, self.y_velocity, self.is_jumping = self.floor_y, 0, False
+                for plat in platforms:
+                    if self.rect.colliderect(plat.sprite_rect):
+                        self.rect.y = plat.sprite_rect.y
+                    else:
 
-        # Check for the color at the top of the sprite
-        top_y = self.rect.bottom - 1
+                        # Stop falling
+                        self.rect.y = self.floor_y
+                        self.y_velocity = 0
+                        self.is_jumping = False
+            elif self.rect.y >= self.floor_y:
+                self.rect.y, self.y_velocity, self.is_jumping = self.floor_y, 0, False"""
+        
+        landed = False
+        FLOOR_BOTTOM_Y = 840  # set this to wherever the visual floor surface actually is
+
+        # Floor collision
+        if self.rect.bottom >= FLOOR_BOTTOM_Y:
+            self.rect.bottom = FLOOR_BOTTOM_Y
+            self.y_velocity = 0
+            self.is_jumping = False
+            landed = True
+
+        # Platform collision
+        if not landed and self.y_velocity > 0:
+            for plat in platforms:
+                if self.rect.colliderect(plat.sprite_rect):
+                    if self.rect.bottom - self.y_velocity <= plat.sprite_rect.top + 5:
+                        self.rect.bottom = plat.sprite_rect.top  # ← also uses rect.bottom
+                        self.y_velocity = 0
+                        self.is_jumping = False
+                        landed = True
+                        break
+
 
         # Timers
         if self.attack_timer > 0: self.attack_timer -= 1
@@ -125,7 +149,7 @@ class Player(pygame.sprite.Sprite):
         else: self.image.set_alpha(255)
 
         # Collsion with generated platforms
-        for plat in platforms:
+        """for plat in platforms:
             if self.rect.colliderect(plat.sprite_rect):
                 if self.rect.y > plat.sprite_rect.bottom - 60:
                     self.rect.top = plat.sprite_rect.bottom - 60
@@ -137,7 +161,7 @@ class Player(pygame.sprite.Sprite):
                     self.rect.right = plat.sprite_rect.left
 
                 if self.rect.x < plat.sprite_rect.right:
-                    self.rect.left = plat.sprite_rect.right
+                    self.rect.left = plat.sprite_rect.right"""
 
     def draw(self, surface):
         surface.blit(self.image, self.rect)
