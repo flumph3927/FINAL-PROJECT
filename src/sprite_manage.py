@@ -29,8 +29,6 @@ class Bullet(pygame.sprite.Sprite):
         self.rect = self.image.get_rect(center=(x, y))
         self.damage = damage
         self.speed = 7 if color == (255, 0, 0) else 12  # Enemy bullets are slower
-        if color == (0,0,225):
-            self.damage = 10
         angle = math.atan2(target_y - y, target_x - x)
         self.dx = math.cos(angle) * self.speed
         self.dy = math.sin(angle) * self.speed
@@ -89,10 +87,9 @@ class Player(pygame.sprite.Sprite):
         self.is_shooting, self.shoot_timer = False, 0
         self.shoot_cooldown = 0
         self.weapon_choices = self.user_data["weapons"] #########Check this when switching weapon ###########
-        self.weapon = 1
+        self.weapon = 2
         self.charge = 0
         self.money = 0
-        self.super = False
         self.fix = 0
         ##############Manage these variables #########################
         self.meta_currency = float(self.user_data["meta_currency"])
@@ -366,7 +363,7 @@ class RangerEnemy(pygame.sprite.Sprite):
 #  MAIN ENGINE 
 
 def setup():
-    super_fix = False
+    supper = False
     player = Player()
     enemies = pygame.sprite.Group()
     player_bullets = pygame.sprite.Group()
@@ -419,7 +416,7 @@ def setup():
                         player.jump()
 
 
-            ##################DUPLICATE THIS TO ALLOW FOR THE SUPER TO BE CAST BY PRESSING U######################
+            ##################DUPLICATE THIS TO ALLOW FOR THE supper TO BE CAST BY PRESSING U######################
             if player.weapon == 1:
                 if event.type == pygame.MOUSEBUTTONDOWN:  
                     if player.health > 0:
@@ -431,7 +428,7 @@ def setup():
                                 player.damage_mod = 4
                                 player.is_attacking = True
                                 player.attack_timer = 15
-                                player.super = True
+                                supper = True
                                 player.charge = 0
                         if event.button == 3 and player.shoot_cooldown == 0:
                             mx, my = pygame.mouse.get_pos()
@@ -451,9 +448,7 @@ def setup():
                             player.shoot_cooldown = 25
                         if event.button == 2:
                             if player.charge >= 4:
-                                player.super = True
-                                super_fix = True
-                                player.damage_mod = 4
+                                supper = True
                                 mx, my = pygame.mouse.get_pos()
                                 player.is_shooting = True
                                 player.shoot_timer = 15
@@ -493,14 +488,7 @@ def setup():
 
             bullet_hits = pygame.sprite.spritecollide(enemy, player_bullets, True)
             for b in bullet_hits:
-                if player.weapon == 2 and player.super != True and super_fix != True:
-                    enemy.health -= 1*player.damage_mod
-                    print("d")
-                elif player.weapon == 2 and super_fix == True:
-                    enemy.health -= Bullet().damage
-                    
-                else:
-                    enemy.health -= 0.5*player.damage_mod
+                enemy.health -= b.damage
 
             # Damage from melee enemies
             if isinstance(enemy, MeleeEnemy):
@@ -518,13 +506,13 @@ def setup():
                 screen.blit(enemy.image, enemy.rect)
                 enemy.draw_health_bar(screen)
         
-        if player.super == True:
-            player.fix+=1
+        if supper == True:
+            player.fix += 1
             if player.fix == 2:
                 player.damage_mod = float(player.user_data["damage_mod"])
-                player.fix == 0
-                player.super = False
-                super_fix = False
+                player.fix = 0
+                supper = False
+                
 
         # Draw bullets
         player_bullets.draw(screen)
