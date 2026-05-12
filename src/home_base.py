@@ -383,11 +383,13 @@ class Rewards(NPC):
                 player.health+=1
                 text=font.render('INCREASED HEALTH', True, (255, 255, 255))
             else:
-                amt=random.randint(5,25)
-            player.money+=amt
-            text=font.render('+'+str(amt)+' MONEY', True, (255, 255, 255))
+                if 3 in player.upgrades:amt=random.randint(15,35)
+                else:amt=random.randint(5,25)
+                player.money+=amt
+                text=font.render('+'+str(amt)+' MONEY', True, (255, 255, 255))
         elif typ==2:
-            amt=random.randint(5,25)
+            if 3 in player.upgrades:amt=random.randint(15,35)
+            else:amt=random.randint(5,25)
             player.money+=amt
             text=font.render('+'+str(amt)+' MONEY', True, (255, 255, 255))
         elif typ==3:
@@ -396,8 +398,8 @@ class Rewards(NPC):
                 player.upgrades=up
                 return player
             else:
-                print('fail')
-                amt=random.randint(5,25)
+                if 3 in player.upgrades:amt=random.randint(15,35)
+                else:amt=random.randint(5,25)
                 player.money+=amt
                 text=font.render('+'+str(amt)+' MONEY', True, (255, 255, 255))
         scrn.blit(text,(300,470))

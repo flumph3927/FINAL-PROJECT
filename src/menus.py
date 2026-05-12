@@ -1,6 +1,6 @@
 #menus file, accessory to main function
 
-import pygame
+import pygame, home_base, sprite_manage
 from helpers import *
 
 # Clayton Baird, Main Menu
@@ -55,7 +55,7 @@ def main_menu(screen):
 
         
         quit_button = Button(400,100,(255,0,0),(0,255,0), "Quit Game",300,700) # still need to figure out what the x and y will be, as well as the colors
-        demo_button = Button(400,100,(255,0,0),(0,255,0),"Try Demo",300,300)
+        demo_button = Button(400,100,(255,0,0),(0,255,0),"Tutorial",300,300)
         load_button = Button(400,100,(255,0,0),(0,255,0),"Load/Create Game",300,500)
 
         quit_button.draw(screen)
@@ -69,8 +69,7 @@ def main_menu(screen):
                 return 1,"Quit"
             demo_clicked = demo_button.is_clicked(event)
             if demo_clicked:
-                print("Demo")
-                pass
+                home_base.tutorial(screen,sprite_manage.Player())
             load_clicked = load_button.is_clicked(event)
             if load_clicked:
                 file_choice = loadgame_menu(screen)

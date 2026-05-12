@@ -57,6 +57,4 @@ def main_loop():
             else:
                 user_data = load_game("documents\\savefile_three.csv")
 
-main_loop()
-
-
+'''main_loop()'''
