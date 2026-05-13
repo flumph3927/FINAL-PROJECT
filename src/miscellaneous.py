@@ -101,4 +101,6 @@ def run_upgrade(scrn,player):
         pygame.display.flip()
         for event in pygame.event.get():
             for i in buttons:
-                if i.is_clicked(event): return i.hover_color
+                if i.is_clicked(event):
+                    player.upgrades.append(i.hover_color)
+                    return player.upgrades
