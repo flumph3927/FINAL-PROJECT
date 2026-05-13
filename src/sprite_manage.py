@@ -128,15 +128,18 @@ class Player(pygame.sprite.Sprite):
             landed = True
 
         # Platform collision
-        if not landed and self.y_velocity > 0:
-            for plat in platforms:
-                if self.rect.colliderect(plat.sprite_rect):
-                    if self.rect.bottom - self.y_velocity <= plat.sprite_rect.top + 5:
-                        self.rect.bottom = plat.sprite_rect.top  # ← also uses rect.bottom
-                        self.y_velocity = 0
-                        self.is_jumping = False
-                        landed = True
-                        break
+        if platforms == None:
+            pass
+        else:
+            if not landed and self.y_velocity > 0:
+                for plat in platforms:
+                    if self.rect.colliderect(plat.sprite_rect):
+                        if self.rect.bottom - self.y_velocity <= plat.sprite_rect.top + 5:
+                            self.rect.bottom = plat.sprite_rect.top  # ← also uses rect.bottom
+                            self.y_velocity = 0
+                            self.is_jumping = False
+                            landed = True
+                            break
 
         # Timers
         if self.attack_timer > 0: self.attack_timer -= 1
@@ -379,7 +382,7 @@ class RangerEnemy(pygame.sprite.Sprite):
 #1 damage
 #2 equals charge
 
-def setup(player,enemies,player_bullets,enemy_bullets,supper):
+def setup(player,enemies,player_bullets,enemy_bullets,supper,reward_given):
 
     # List containing enemy types to spawn
     enemy_type_list = []
@@ -547,7 +550,7 @@ def setup(player,enemies,player_bullets,enemy_bullets,supper):
                 supper = False
 
 
-        reward_given = False
+        
         if bool(enemies) == False and reward_given == False:
             reward = Rewards("Reward","images\\RewardChest.png")
             reward.show(screen,(450,450))

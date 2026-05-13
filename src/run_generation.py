@@ -32,6 +32,7 @@ pygame.init()
         
 
 def run_loop():
+    reward_given = False
     supper = False
     player = Player()
     enemies = pygame.sprite.Group()
@@ -42,7 +43,7 @@ def run_loop():
     while True:
         if room_count <= 4:
             room_count += 1
-            alive, player = setup(player,enemies,player_bullets,enemy_bullets,supper)
+            alive, player = setup(player,enemies,player_bullets,enemy_bullets,supper,reward_given)
 
             if alive == False:
                 return player

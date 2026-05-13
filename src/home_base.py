@@ -210,7 +210,7 @@ def tutorial(scrn,player):
             #display instruction on screen
             text=font.render(i, True, (255, 255, 255))
             scrn.blit(text,(200,200))
-            player.update()
+            player.update(None)
             player.draw(scrn)
             pygame.display.flip()
             clock.tick(60)
@@ -233,7 +233,7 @@ def tutorial(scrn,player):
         #basically just everything from sprite_manage
         scrn.blit(bg,(100,100))
         miscellaneous.show_hud(scrn,player.health,player.weapon,player.upgrades,player.charge,player.money)
-        player.update()
+        player.update(None)
         player.draw(scrn)
         if step==2:
             enemy.update(player,enemy_bullets,pygame.sprite.Group())
@@ -344,7 +344,7 @@ def home(scrn,diffs,player,filepath):
             scrn.blit(bg,(100,100))
             current.show(scrn,(300,678))
             #player movement here
-            player.update()
+            player.update(None)
             player.draw(scrn)
             pygame.display.flip()
             #if user interacts with room npc:
