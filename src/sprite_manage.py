@@ -4,6 +4,8 @@ import random
 from knockback import knockbackfunc
 from data_management import *
 from miscellaneous import *
+from room_classes import *
+from home_base import *
 
 #  INITIAL SETUP 
 num_enemies = 0
@@ -80,7 +82,7 @@ class Player(pygame.sprite.Sprite):
         
 
         # Stats
-        self.speed, self.floor_y, self.y_velocity = 8, 860, 0
+        self.speed, self.floor_y, self.y_velocity = 8, 800, 0
         self.gravity, self.jump_strength = 0.8, -16.5
         self.health = self.max_health
         self.iframes = 0
@@ -369,28 +371,23 @@ class RangerEnemy(pygame.sprite.Sprite):
 #1 damage
 #2 equals charge
 
-def setup():
-    
-    supper = False
-    player = Player()
-    enemies = pygame.sprite.Group()
-    player_bullets = pygame.sprite.Group()
-    enemy_bullets = pygame.sprite.Group()
+def setup(player,enemies,player_bullets,enemy_bullets,supper):
 
     # List containing enemy types to spawn
     enemy_type_list = []
-    for i in range(4):
-        num = random.randint(1,3)
-        if num == 1:
-            enemy_type_list.append('drone')
-        if num == 2:
-            enemy_type_list.append('melee')
-        else:
-            enemy_type_list.append('ranger')
+    # This code is for generating enemies randomly. Currently commented out for dev purposes
+    
+    
+
+    room = CombatRoom(900,900) # Initilize the room
+    room.generate_enemies() # Generate enemy list, similar to above code
+    platforms = room.generate_platforms() # Generate platforms, to be drawn later.
+
+    #enemy_type_list = ['drone', 'melee', 'ranger', 'drone', 'melee', 'ranger']
     # Count how many of each type
-    drone_count = enemy_type_list.count('drone')
-    melee_count = enemy_type_list.count('melee')
-    ranger_count = enemy_type_list.count('ranger')
+    drone_count = room.enemies.count('drone')
+    melee_count = room.enemies.count('melee')
+    ranger_count = room.enemies.count('ranger')
 
     # Spawn drones at fixed y position 50 pixels above ground
     drone_spawn_y = player.floor_y - 50
@@ -539,6 +536,20 @@ def setup():
                 player.damage_mod = float(player.user_data["damage_mod"])
                 player.fix = 0
                 supper = False
+
+
+        reward_given = False
+        if bool(enemies) == False and reward_given == False:
+
+            reward = Rewards("Reward","images\\RewardChest.png")
+            reward.show(screen,450)
+            player = reward.speak(screen,player)
+            reward_given = True
+            del reward
+
+        if player.rect.x in range(850,900) and bool(enemies) == False:
+            print("This would generate the next room if it actually worked")
+            break
                 
 
         # Draw bullets
@@ -547,9 +558,7 @@ def setup():
 
         pygame.display.flip()
         clock.tick(60)
-    print("how")
 
-setup()
 
 
 ####Fix meta upgrades####
