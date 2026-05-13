@@ -32,9 +32,12 @@ def load_game(file_path):
     return user_data
 
 def save_game(file_path,user_data):
+    if file_path=='documents/savefile_one.csv':
+        with open('documents/one_upgrades.csv',mode="w",newline="") as file:
+            writer=csv.writer(file)
+            writer.writerow(user_data["upgrades"])
     with open(file_path,mode="w",newline="") as user_csv:
         fieldnames = ["max_health","damage_mod","i_frame_mod","money","upgrades"]
-
         writer = csv.DictWriter(user_csv,fieldnames)
         save_data=user_data
         if file_path=='documents/savefile_one.csv': save_data["upgrades"]='documents/one_upgrades.csv'
@@ -42,10 +45,7 @@ def save_game(file_path,user_data):
         for i in fieldnames: top_row[i]=i
         writer.writerow(top_row)
         writer.writerow(save_data)
-    if file_path=='documents/savefile_one.csv':
-        with open('documents/one_upgrades.csv',mode="w",newline="") as file:
-            writer=csv.writer(file)
-            writer.writerow(user_data["upgrades"])
+    
 
 load_game('documents/savefile_one.csv')
 save_game('documents/savefile_one.csv',{'max_health': '5.0', 'damage_mod': '1.0', 'i_frame_mod': '1.0', 'money': '200', 'upgrades': ['+1 HEALTH', '+1 HEALTH 2']})
