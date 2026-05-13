@@ -537,8 +537,7 @@ def setup(player,enemies,player_bullets,enemy_bullets,supper):
                 enemy.kill()
             enemy_bullets.empty()
             player_bullets.empty()
-            running = False
-            continue
+            return False, player
 
         if supper == True:
             player.fix += 1
