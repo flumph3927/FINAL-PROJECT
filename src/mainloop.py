@@ -44,17 +44,20 @@ def main_loop():
         if type == 1:
             if main_action == "Quit":
                 break
-
-            elif main_action == "Demo":
-                pass
         else:
             if main_action == "One":
-                user_data = load_game("documents\\savefile_one.csv")
+                player=Player('documents/savefile_one.csv')
 
             elif main_action == "Two":
-                user_data = load_game("documents\\savefile_two.csv")
-
+                player=Player('documents/savefile_two.csv')
+                
             else:
-                user_data = load_game("documents\\savefile_three.csv")
+                player=Player('documents/savefile_three.csv')
+            
+        home(screen,False,player)
+        
+    
+            
+            
 
 '''main_loop()'''

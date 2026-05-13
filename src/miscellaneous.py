@@ -94,6 +94,7 @@ def run_upgrade(scrn,player):
             buttons.append(Button(60,60,sprites[chosen[2]],chosen[2],texts[chosen[2]],700,500))
     #return upgrade user clicks on
     while True:
+        scrn.fill((0,0,0))
         for i in buttons:
             i.draw(scrn)
         pygame.display.flip()
