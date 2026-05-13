@@ -37,7 +37,6 @@ def load_game(file_path):
     
     user_data=data
     user_data['upgrades']=upgrades
-    print(user_data)
     return user_data
 
 def save_game(file_path,user_data):
