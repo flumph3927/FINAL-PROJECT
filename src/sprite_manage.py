@@ -75,8 +75,8 @@ class Player(pygame.sprite.Sprite):
             self.gun_surf = pygame.Surface((32, 16)); self.gun_surf.fill((100, 100, 100))
 
         ###########Have variable file path############
-        self.user_data = load_game(file_path=save_file)
-        self.max_health = float(self.user_data["max_health"])
+        self.user_data = load_game(file_path="documents/savefile_one.csv")
+        self.max_health = 5.0
         self.damage_mod = float(self.user_data["damage_mod"]) ##########Implement at each damge use #############
         self.iframes_mod = float(self.user_data["i_frame_mod"]) #########Implement this at each of the uses of player i frames ###########
         
@@ -90,6 +90,7 @@ class Player(pygame.sprite.Sprite):
         self.is_attacking, self.attack_timer = False, 0
         self.is_shooting, self.shoot_timer = False, 0
         self.shoot_cooldown = 0
+        """self.weapon_choices = self.user_data["weapons"] #########Check this when switching weapon ###########"""
         self.weapon = 2
         self.max_charge = 4
         self.charge = 0
@@ -105,7 +106,7 @@ class Player(pygame.sprite.Sprite):
             self.y_velocity = self.jump_strength
             self.is_jumping = True
 
-    def update(self):
+    def update(self,platforms):
         keys = pygame.key.get_pressed()
         if self.health > 0:
             if keys[pygame.K_LEFT] or keys[pygame.K_a]:
@@ -116,19 +117,26 @@ class Player(pygame.sprite.Sprite):
         self.y_velocity += self.gravity
         self.rect.y += self.y_velocity
         
-        # Check for the specific color at the bottom of the sprite
-        pixel_x = self.rect.centerx
-        pixel_y = self.rect.bottom + 1  # pixel just below the sprite
-        # Ensure the point is within screen bounds
-        if 0 <= pixel_x < screen.get_width() and 0 <= pixel_y < screen.get_height():
-            pixel_color = screen.get_at((int(pixel_x), int(pixel_y)))[:3]
-            if pixel_color == (156, 90, 60):
-                # Stop falling
-                self.rect.y = pixel_y - self.rect.height
-                self.y_velocity = 0
-                self.is_jumping = False
-            elif self.rect.y >= self.floor_y:
-                self.rect.y, self.y_velocity, self.is_jumping = self.floor_y, 0, False
+        landed = False
+        FLOOR_BOTTOM_Y = 840  # set this to wherever the visual floor surface actually is
+
+        # Floor collision
+        if self.rect.bottom >= FLOOR_BOTTOM_Y:
+            self.rect.bottom = FLOOR_BOTTOM_Y
+            self.y_velocity = 0
+            self.is_jumping = False
+            landed = True
+
+        # Platform collision
+        if not landed and self.y_velocity > 0:
+            for plat in platforms:
+                if self.rect.colliderect(plat.sprite_rect):
+                    if self.rect.bottom - self.y_velocity <= plat.sprite_rect.top + 5:
+                        self.rect.bottom = plat.sprite_rect.top  # ← also uses rect.bottom
+                        self.y_velocity = 0
+                        self.is_jumping = False
+                        landed = True
+                        break
 
         # Timers
         if self.attack_timer > 0: self.attack_timer -= 1
@@ -404,10 +412,12 @@ def setup(player,enemies,player_bullets,enemy_bullets,supper):
         enemies.add(RangerEnemy(random.randint(700, 950), ranger_spawn_y))
 
     running = True
+    player.rect.x, player.rect.y = 100,800
     while running:
         screen.fill((0, 0, 0))
         pygame.draw.rect(screen, (255, 255, 255), (100, 100, 800, 800))
         show_hud(screen, player.health, player.weapon, player.upgrades, player.charge, player.money)
+        room.draw(screen,platforms)
         player.draw(screen)
         for i in player.upgrades:
             if i == 0:
@@ -421,7 +431,7 @@ def setup(player,enemies,player_bullets,enemy_bullets,supper):
                 pass
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
-                running = False
+                pygame.quit()
             
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_m:
@@ -475,7 +485,7 @@ def setup(player,enemies,player_bullets,enemy_bullets,supper):
                             player.attack_timer = 15
 
         # Update logic
-        player.update()
+        player.update(platforms)
         # List of ranger enemies
         ranger_enemies = [enemy for enemy in enemies if isinstance(enemy, RangerEnemy)]
         for enemy in list(enemies):
@@ -540,9 +550,8 @@ def setup(player,enemies,player_bullets,enemy_bullets,supper):
 
         reward_given = False
         if bool(enemies) == False and reward_given == False:
-
             reward = Rewards("Reward","images\\RewardChest.png")
-            reward.show(screen,450)
+            reward.show(screen,(450,450))
             player = reward.speak(screen,player)
             reward_given = True
             del reward
