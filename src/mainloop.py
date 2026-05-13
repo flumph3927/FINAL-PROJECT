@@ -9,6 +9,7 @@ from home_base import *
 from menus import *
 from miscellaneous import *
 from sprite_manage import *
+from run_generation import*
 
 # def main_loop():
     # initialize pygame
@@ -38,6 +39,7 @@ def main_loop():
     screen = pygame.display.set_mode((1000,1000))
     
     while True:
+        save_path = None
         screen.fill((255,255,255))
         type, main_action = main_menu(screen)
 
@@ -46,18 +48,24 @@ def main_loop():
                 break
         else:
             if main_action == "One":
+                save_path = 'documents/savefile_one.csv'
                 player=Player('documents/savefile_one.csv')
 
             elif main_action == "Two":
+                save_path = 'documents/savefile_two.csv'
                 player=Player('documents/savefile_two.csv')
                 
             else:
+                save_path = 'documents/savefile_three.csv'
                 player=Player('documents/savefile_three.csv')
-            
-        home(screen,False,player)
+        while True:
+            trigger_run = home(screen,False,player)
+
+            if trigger_run in [True,False]:
+                player = run_loop()
         
     
             
             
 
-'''main_loop()'''
+main_loop()

@@ -42,13 +42,18 @@ def run_loop():
     while True:
         if room_count <= 4:
             room_count += 1
-            setup(player,enemies,player_bullets,enemy_bullets,supper)
+            alive, player = setup(player,enemies,player_bullets,enemy_bullets,supper)
+
+            if alive == False:
+                return player
+            else:
+                continue
         elif room_count == 5:
             pass # generate healing room
         else:
             pass # generate boss room
-
-run_loop()
+if __name__ == "__main__":
+    run_loop()
 # What will need to be done from here is that we need to get room generation running at the start of setup so it actually generates the correct room.
 # After this, we need to make sure setup() runs in run_loop the proper amount of times, and then have the heal room, shop room, and finally boss room load.
 # This all needs to work so if the user dies, they return to the home base with the meta currency they collected.
