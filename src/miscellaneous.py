@@ -55,6 +55,7 @@ def pause(scrn,player,filepath):
             #if save and exit button clicked: return True
             if save.is_clicked(event):
                 data_management.save_game(filepath,{'max_health':player.max_health,'damage_mod':player.damage_mod,'i_frame_mod':player.iframes_mod,'money':player.money,'upgrades':player.meta_upgrades})
+                return "Exit"
             #if resume button clicked: return False
             if resume.is_clicked(event): return
 

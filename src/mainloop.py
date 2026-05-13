@@ -47,23 +47,17 @@ def main_loop():
             if main_action == "Quit":
                 break
         else:
-            if main_action == "One":
-                save_path = 'documents/savefile_one.csv'
-                player=Player('documents/savefile_one.csv')
-
-            elif main_action == "Two":
-                save_path = 'documents/savefile_two.csv'
-                player=Player('documents/savefile_two.csv')
-                
-            else:
-                save_path = 'documents/savefile_three.csv'
-                player=Player('documents/savefile_three.csv')
+            # Always load save file one
+            save_path = 'documents/savefile_one.csv'
+            player=Player('documents/savefile_one.csv')
         while True:
             trigger_run = home(screen,False,player,save_path)
 
             if trigger_run in [True,False]:
-                player = run_loop()
-        
+                player = run_loop(save_path)
+            elif trigger_run == "Exit":
+                del player
+                break
     
             
             

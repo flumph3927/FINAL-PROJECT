@@ -1,6 +1,6 @@
 #All home base items, NPC classes, 
 
-import pygame,time,random, miscellaneous, helpers, sprite_manage
+import pygame,time,random, miscellaneous, helpers
 from knockback import knockbackfunc
 
 #create class NPC
@@ -197,6 +197,7 @@ class TutorialNPC(NPC):
 
 #create function tutorial, get screen
 def tutorial(scrn,player):
+    import sprite_manage
     instructions=['Enter to see next instructions','WASD or Arrow Keys to move','W, up arrow, or space to jump','Right click for primary attack','Left click for secondary attack','E to interact','Enter to begin combat tutorial']
     #draw background on screen
     bg=pygame.transform.scale(pygame.image.load('images/TutorialRoom.png').convert_alpha(),(800,800))
@@ -357,7 +358,9 @@ def home(scrn,diffs,player,filepath):
                     elif event.key==pygame.K_w or event.key==pygame.K_UP or event.key==pygame.K_SPACE:
                         player.jump()
                     elif event.key==pygame.K_ESCAPE:
-                        miscellaneous.pause(scrn,player,filepath)
+                        exit_check = miscellaneous.pause(scrn,player,filepath)
+                        if exit_check == "Exit":
+                            return "Exit"
             #if user in exit:
             if player.rect.x>=875:
                 #change room number
@@ -381,7 +384,7 @@ class Rewards(NPC):
         font=pygame.font.SysFont('',60)
         typ=random.randint(1,3)
         if typ==1:
-            if player.health<=player.max_health-1:
+            if player.health<=player.max_health-3:
                 player.health+=1
                 text=font.render('INCREASED HEALTH', True, (255, 255, 255))
             else:
@@ -404,7 +407,6 @@ class Rewards(NPC):
                 else:amt=random.randint(5,25)
                 player.money+=amt
                 text=font.render('+'+str(amt)+' MONEY', True, (255, 255, 255))
-        scrn.fill((0,0,0))
         scrn.blit(text,(300,470))
         pygame.display.flip()
         time.sleep(5)
@@ -412,7 +414,7 @@ class Rewards(NPC):
     
     def show(self,scrn,coords):
         #place img on screen with button to speak message below it and name above it on screen
-        reward_image = pygame.image.load('images\RewardChest.png').convert_alpha()
+        reward_image = pygame.image.load(self.img).convert_alpha()
         scrn.blit(reward_image,coords)
         font=pygame.font.SysFont('',60)
         text=font.render(self.name, True, (255, 255, 255))

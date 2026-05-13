@@ -31,10 +31,11 @@ import pygame
 pygame.init()
         
 
-def run_loop():
+def run_loop(save_path):
+    alive = True
     reward_given = False
     supper = False
-    player = Player()
+    player = Player(save_path)
     enemies = pygame.sprite.Group()
     player_bullets = pygame.sprite.Group()
     enemy_bullets = pygame.sprite.Group()
@@ -43,7 +44,7 @@ def run_loop():
     while True:
         if room_count <= 4:
             room_count += 1
-            alive, player = setup(player,enemies,player_bullets,enemy_bullets,supper,reward_given)
+            alive, player = setup(player,enemies,player_bullets,enemy_bullets,supper,reward_given,alive,save_path)
 
             if alive == False:
                 return player
@@ -54,7 +55,7 @@ def run_loop():
         else:
             pass # generate boss room
 if __name__ == "__main__":
-    run_loop()
+    run_loop('documents/savefile_one.csv')
 # What will need to be done from here is that we need to get room generation running at the start of setup so it actually generates the correct room.
 # After this, we need to make sure setup() runs in run_loop the proper amount of times, and then have the heal room, shop room, and finally boss room load.
 # This all needs to work so if the user dies, they return to the home base with the meta currency they collected.
