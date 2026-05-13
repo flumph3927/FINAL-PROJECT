@@ -36,6 +36,14 @@ def save_game(file_path,user_data):
         with open('documents/one_upgrades.csv',mode="w",newline="") as file:
             writer=csv.writer(file)
             writer.writerow(user_data["upgrades"])
+    elif file_path=='documents/savefile_two.csv':
+        with open('documents/two_upgrades.csv',mode="w",newline="") as file:
+            writer=csv.writer(file)
+            writer.writerow(user_data["upgrades"])
+    elif file_path=='documents/savefile_three.csv':
+        with open('documents/three_upgrades.csv',mode="w",newline="") as file:
+            writer=csv.writer(file)
+            writer.writerow(user_data["upgrades"])
     with open(file_path,mode="w",newline="") as user_csv:
         fieldnames = ["max_health","damage_mod","i_frame_mod","money","upgrades"]
         writer = csv.DictWriter(user_csv,fieldnames)
@@ -47,5 +55,5 @@ def save_game(file_path,user_data):
         writer.writerow(save_data)
     
 
-load_game('documents/savefile_one.csv')
-save_game('documents/savefile_one.csv',{'max_health': '5.0', 'damage_mod': '1.0', 'i_frame_mod': '1.0', 'money': '200', 'upgrades': ['+1 HEALTH', '+1 HEALTH 2']})
+'''load_game('documents/savefile_one.csv')
+save_game('documents/savefile_one.csv',{'max_health': '5.0', 'damage_mod': '1.0', 'i_frame_mod': '1.0', 'money': '200', 'upgrades': ['+1 HEALTH', '+1 HEALTH 2']})'''

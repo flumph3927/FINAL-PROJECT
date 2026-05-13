@@ -44,7 +44,7 @@ class Bullet(pygame.sprite.Sprite):
             self.kill()
 
 class Player(pygame.sprite.Sprite):
-    def __init__(self):
+    def __init__(self,save_file = "documents/savefile_one.csv"):
         super().__init__()
         # Load Player Sprite
         try:
@@ -97,7 +97,7 @@ class Player(pygame.sprite.Sprite):
         self.money = 0
         self.fix = 0
         ##############Manage these variables #########################
-        self.meta_currency = float(self.user_data["money"])
+        self.money = float(self.user_data["money"])
         self.meta_upgrades = self.user_data['upgrades']
         self.upgrades = []
 
@@ -572,4 +572,4 @@ def setup(player,enemies,player_bullets,enemy_bullets,supper):
 
 ####Fix meta upgrades####
 
-####Fix the way to pull###
+####Fix the way to pull#####
