@@ -300,7 +300,7 @@ def tutorial(scrn,player):
                     player.shoot_cooldown = 25
 
 #create function home, get scrn, difficulties
-def home(scrn,diffs,player):
+def home(scrn,diffs,player,filepath):
     #loop:
     room=1
     while True:
@@ -356,6 +356,8 @@ def home(scrn,diffs,player):
                         else: player.meta_upgrades, player.weapon,player.money = current.speak(scrn,player.weapon,player.meta_upgrades,player.money)
                     elif event.key==pygame.K_w or event.key==pygame.K_UP or event.key==pygame.K_SPACE:
                         player.jump()
+                    elif event.key==pygame.K_ESCAPE:
+                        miscellaneous.pause(scrn,player,filepath)
             #if user in exit:
             if player.rect.x>=875:
                 #change room number
