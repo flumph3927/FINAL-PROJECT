@@ -42,7 +42,7 @@ class Bullet(pygame.sprite.Sprite):
             self.kill()
 
 class Player(pygame.sprite.Sprite):
-    def __init__(self):
+    def __init__(self,save_file = "documents/savefile_one.csv"):
         super().__init__()
         # Load Player Sprite
         try:
@@ -73,8 +73,8 @@ class Player(pygame.sprite.Sprite):
             self.gun_surf = pygame.Surface((32, 16)); self.gun_surf.fill((100, 100, 100))
 
         ###########Have variable file path############
-        self.user_data = load_game(file_path="documents/savefile_one.csv")
-        self.max_health = 5.0 * float(self.user_data["health_mod"])
+        self.user_data = load_game(file_path=save_file)
+        self.max_health = float(self.user_data["max_health"])
         self.damage_mod = float(self.user_data["damage_mod"]) ##########Implement at each damge use #############
         self.iframes_mod = float(self.user_data["i_frame_mod"]) #########Implement this at each of the uses of player i frames ###########
         
@@ -88,16 +88,14 @@ class Player(pygame.sprite.Sprite):
         self.is_attacking, self.attack_timer = False, 0
         self.is_shooting, self.shoot_timer = False, 0
         self.shoot_cooldown = 0
-        self.weapon_choices = self.user_data["weapons"] #########Check this when switching weapon ###########
-        self.weapon = 1
+        self.weapon = 2
         self.max_charge = 4
         self.charge = 0
         self.money = 0
         self.fix = 0
         ##############Manage these variables #########################
-        self.meta_currency = float(self.user_data["meta_currency"])
+        self.money = float(self.user_data["money"])
         self.meta_upgrades = self.user_data['upgrades']
-        self.boss_drops = self.user_data["boss_drops"]
         self.upgrades = []
 
     def jump(self):
@@ -556,4 +554,4 @@ setup()
 
 ####Fix meta upgrades####
 
-####Fix the way to pull###
+####Fix the way to pull#####
