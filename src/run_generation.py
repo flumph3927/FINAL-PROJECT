@@ -5,7 +5,7 @@
 # import all neccesary sprites
 
 from room_classes import *
-from test_sprite_manage import *
+from sprite_manage import *
 import pygame
 
 # def generate_room(room_count):
@@ -32,6 +32,7 @@ pygame.init()
         
 
 def run_loop():
+    supper = False
     player = Player()
     enemies = pygame.sprite.Group()
     player_bullets = pygame.sprite.Group()
@@ -39,9 +40,13 @@ def run_loop():
     room_count = 1
     
     while True:
-        if room_count != 4:
+        if room_count <= 4:
             room_count += 1
-            setup(player,enemies,player_bullets,enemy_bullets)
+            setup(player,enemies,player_bullets,enemy_bullets,supper)
+        elif room_count == 5:
+            pass # generate healing room
+        else:
+            pass # generate boss room
 
 run_loop()
 # What will need to be done from here is that we need to get room generation running at the start of setup so it actually generates the correct room.

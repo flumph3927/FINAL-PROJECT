@@ -4,6 +4,8 @@ import random
 from knockback import knockbackfunc
 from data_management import *
 from miscellaneous import *
+from room_classes import *
+from home_base import *
 
 #  INITIAL SETUP 
 num_enemies = 0
@@ -365,52 +367,44 @@ class RangerEnemy(pygame.sprite.Sprite):
 
 #  MAIN ENGINE 
 
-# 0 increases health
-#1 damage
-#2 equals charge
+def setup(player,enemies,player_bullets,enemy_bullets,supper):
 
-def setup():
-    
-    supper = False
-    player = Player()
-    enemies = pygame.sprite.Group()
-    player_bullets = pygame.sprite.Group()
-    enemy_bullets = pygame.sprite.Group()
-
-    # List containing enemy types to spawn
+# List containing enemy types to spawn
     enemy_type_list = []
-    for i in range(4):
-        num = random.randint(1,3)
-        if num == 1:
-            enemy_type_list.append('drone')
-        if num == 2:
-            enemy_type_list.append('melee')
-        else:
-            enemy_type_list.append('ranger')
+    # This code is for generating enemies randomly. Currently commented out for dev purposes.
+    
+    room = CombatRoom(900,900) # Initilize the room
+    room.generate_enemies() # Generate enemy list, similar to above code
+    platforms = room.generate_platforms() # Generate platforms, to be drawn later.
+
+    #enemy_type_list = ['drone', 'melee', 'ranger', 'drone', 'melee', 'ranger']
     # Count how many of each type
-    drone_count = enemy_type_list.count('drone')
-    melee_count = enemy_type_list.count('melee')
-    ranger_count = enemy_type_list.count('ranger')
+    drone_count = room.enemies.count('drone')
+    melee_count = room.enemies.count('melee')
+    ranger_count = room.enemies.count('ranger')
 
     # Spawn drones at fixed y position 50 pixels above ground
     drone_spawn_y = player.floor_y - 50
     for _ in range(drone_count):
-        enemies.add(Enemy(random.randint(150, 650), drone_spawn_y, enemy_type='drone'))
+        enemies.add(Enemy(random.randint(350, 650), drone_spawn_y, enemy_type='drone'))
 
     # Spawn melee enemies at ground level
     for _ in range(melee_count):
-        enemies.add(MeleeEnemy(random.randint(150, 650), player.floor_y))
+        enemies.add(MeleeEnemy(random.randint(550, 650), player.floor_y))
 
     # Spawn ranger enemies on the right side, at fixed y
     ranger_spawn_y = player.floor_y
     for _ in range(ranger_count):
         enemies.add(RangerEnemy(random.randint(700, 950), ranger_spawn_y))
 
+    player.rect.x, player.rect.y = 100,800
+
     running = True
     while running:
         screen.fill((0, 0, 0))
         pygame.draw.rect(screen, (255, 255, 255), (100, 100, 800, 800))
         show_hud(screen, player.health, player.weapon, player.upgrades, player.charge, player.money)
+        room.draw(screen,platforms)
         player.draw(screen)
         for i in player.upgrades:
             if i == 0:
@@ -424,7 +418,7 @@ def setup():
                 pass
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
-                running = False
+                pygame.quit()
             
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_m:
@@ -478,7 +472,7 @@ def setup():
                             player.attack_timer = 15
 
         # Update logic
-        player.update()
+        player.update(platforms)
         # List of ranger enemies
         ranger_enemies = [enemy for enemy in enemies if isinstance(enemy, RangerEnemy)]
         for enemy in list(enemies):
@@ -530,6 +524,21 @@ def setup():
                 player.damage_mod = float(player.user_data["damage_mod"])
                 player.fix = 0
                 supper = False
+
+        # This code should work for the reward, though it does not currently work with how the code in the test here is setup.
+        reward_given = False
+
+        if bool(enemies) == False and reward_given == False:
+            reward = Rewards("Reward","images\\RewardChest.png")
+            reward.show(screen,(450,200))
+            reward.speak(screen,player)
+            reward_given == True
+            del reward
+            
+
+        if player.rect.x in range(850,900) and bool(enemies) == False:
+            print("This would generate the next room if it actually worked")
+            break
                 
 
         # Draw bullets
@@ -538,13 +547,3 @@ def setup():
 
         pygame.display.flip()
         clock.tick(60)
-    print("how")
-
-setup()
-
-
-####Fix meta upgrades####
-
-####Get rid of the freezing and red outline, and instead send them to main#########
-
-####Fix Ranger bug####
