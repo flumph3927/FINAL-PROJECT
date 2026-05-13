@@ -21,11 +21,20 @@ def load_game(file_path):
         
         # 2. Grab the actual data row
         data = next(reader)
-    upgrades=[]
-    with open(data['upgrades'],mode="r",newline='') as file:
-        reader=csv.reader(file)
-        for row in reader:
-            upgrades=row
+    
+    # Handle upgrades - could be a file path or direct data
+    if data['upgrades'].startswith('documents/'):
+        # It's a file path, load from the upgrade file
+        upgrades=[]
+        with open(data['upgrades'],mode="r",newline='') as file:
+            reader=csv.reader(file)
+            for row in reader:
+                upgrades=row
+    else:
+        # It's direct data, parse it as a list
+        import ast
+        upgrades = ast.literal_eval(data['upgrades'])
+    
     user_data=data
     user_data['upgrades']=upgrades
     print(user_data)
@@ -48,12 +57,13 @@ def save_game(file_path,user_data):
         fieldnames = ["max_health","damage_mod","i_frame_mod","money","upgrades"]
         writer = csv.DictWriter(user_csv,fieldnames)
         save_data=user_data
-        if file_path=='documents/savefile_one.csv': save_data["upgrades"]='documents/one_upgrades.csv'
+        if file_path=='documents/savefile_one.csv': 
+            save_data["upgrades"]='documents/one_upgrades.csv'
+        elif file_path=='documents/savefile_two.csv': 
+            save_data["upgrades"]='documents/two_upgrades.csv'
+        elif file_path=='documents/savefile_three.csv': 
+            save_data["upgrades"]='documents/three_upgrades.csv'
         top_row={}
         for i in fieldnames: top_row[i]=i
         writer.writerow(top_row)
         writer.writerow(save_data)
-    
-
-'''load_game('documents/savefile_one.csv')
-save_game('documents/savefile_one.csv',{'max_health': '5.0', 'damage_mod': '1.0', 'i_frame_mod': '1.0', 'money': '200', 'upgrades': ['+1 HEALTH', '+1 HEALTH 2']})'''

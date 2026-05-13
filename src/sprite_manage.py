@@ -75,7 +75,7 @@ class Player(pygame.sprite.Sprite):
             self.gun_surf = pygame.Surface((32, 16)); self.gun_surf.fill((100, 100, 100))
 
         ###########Have variable file path############
-        self.user_data = load_game(file_path="documents/savefile_one.csv")
+        self.user_data = load_game(file_path=save_file)
         self.max_health = 5.0
         self.damage_mod = float(self.user_data["damage_mod"]) ##########Implement at each damge use #############
         self.iframes_mod = float(self.user_data["i_frame_mod"]) #########Implement this at each of the uses of player i frames ###########
@@ -382,7 +382,7 @@ class RangerEnemy(pygame.sprite.Sprite):
 #1 damage
 #2 equals charge
 
-def setup(player,enemies,player_bullets,enemy_bullets,supper,reward_given):
+def setup(player,enemies,player_bullets,enemy_bullets,supper,reward_given,alive,save_path):
 
     # List containing enemy types to spawn
     enemy_type_list = []
@@ -390,7 +390,7 @@ def setup(player,enemies,player_bullets,enemy_bullets,supper,reward_given):
     
     
 
-    room = CombatRoom(900,900) # Initilize the room
+    room = CombatRoom(900,900) # Initialize the room
     room.generate_enemies() # Generate enemy list, similar to above code
     platforms = room.generate_platforms() # Generate platforms, to be drawn later.
 
@@ -437,8 +437,12 @@ def setup(player,enemies,player_bullets,enemy_bullets,supper,reward_given):
                 pygame.quit()
             
             if event.type == pygame.KEYDOWN:
-                if event.key == pygame.K_m:
-                    enemies.add(Enemy(random.randint(150, 650), random.randint(150, 450)))
+                if event.key == pygame.K_ESCAPE:
+                    exit_check = miscellaneous.pause(screen, player, save_path)
+                    if exit_check == "Exit":
+                        # Return to home base without saving run progress
+                        alive = False
+                        return alive, player
                 if player.health > 0:
                     if event.key in [pygame.K_UP, pygame.K_w, pygame.K_SPACE]:
                         player.jump()
@@ -540,7 +544,9 @@ def setup(player,enemies,player_bullets,enemy_bullets,supper,reward_given):
                 enemy.kill()
             enemy_bullets.empty()
             player_bullets.empty()
-            return False, player
+            alive = False
+            player.health = player.max_health
+            return alive, player
 
         if supper == True:
             player.fix += 1
@@ -570,6 +576,7 @@ def setup(player,enemies,player_bullets,enemy_bullets,supper,reward_given):
         pygame.display.flip()
         clock.tick(60)
 
+    return alive, player
 
 
 ####Fix meta upgrades####
