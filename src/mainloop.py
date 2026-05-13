@@ -59,7 +59,7 @@ def main_loop():
                 save_path = 'documents/savefile_three.csv'
                 player=Player('documents/savefile_three.csv')
         while True:
-            trigger_run = home(screen,False,player)
+            trigger_run = home(screen,False,player,save_path)
 
             if trigger_run in [True,False]:
                 player = run_loop()
