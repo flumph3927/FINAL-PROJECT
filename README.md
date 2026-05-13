@@ -1,6 +1,6 @@
 # Decypher
 ***
-(screenshot of running project)
+![running_game](images/Screenshot%202026-05-13%20094401.png)
 Decypher is a rougelite game based around a robot, named Cypher. Cypher has been tossed out of their city, and down into the wastelands below. They must now climb their way back up through rooms of rogue or enemy robots, to make it back. Cypher is not alone in their journey though, as they have allies who are willing to help, some with a story similar to Cypher, like the engineer from the city above who can modify Cypher for runs to give them a better chance, and some who've been in the wasteland since creation, like the weaponsmith who can allow Cypher to switch their weapons, and an older robot who can teach Cypher things they might not know. While on their run, Cypher can clear rooms, and get rewards that will upgrade them for that run. Defeating the bosses of areas can give you drops, which are used to get certain meta-progression upgrades.
 
 ## How to use
