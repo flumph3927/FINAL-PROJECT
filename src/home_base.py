@@ -402,6 +402,7 @@ class Rewards(NPC):
                 else:amt=random.randint(5,25)
                 player.money+=amt
                 text=font.render('+'+str(amt)+' MONEY', True, (255, 255, 255))
+        scrn.fill((0,0,0))
         scrn.blit(text,(300,470))
         pygame.display.flip()
         time.sleep(5)
