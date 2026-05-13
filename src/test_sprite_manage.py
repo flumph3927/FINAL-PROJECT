@@ -366,16 +366,7 @@ def setup(player,enemies,player_bullets,enemy_bullets):
 
     # List containing enemy types to spawn
     enemy_type_list = []
-    # This code is for generating enemies randomly. Currently commented out for dev purposes.
-    """for i in range(5):
-        num = random.randint(1,3)
-        if num == 1:
-            enemy_type_list.append('drone')
-        if num == 2:
-            enemy_type_list.append('melee')
-        else:
-            enemy_type_list.append('ranger')"""
-    
+    # This code is for generating enemies randomly. Currently commented out for dev purposes
     
     
 
