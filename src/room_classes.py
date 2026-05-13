@@ -4,7 +4,6 @@
 # import all neccesary sprites
 import random
 import pygame
-from sprite_manage import *
 # class Reward
 
 # class CombatRoom:
@@ -127,11 +126,11 @@ class CombatRoom:
 
     def generate_platforms(self):
         platforms = []
-        def low_platforms():
-            platform_1_y = random.randint(50,150)
+        def high_platforms():
+            platform_1_y = random.randint(600,650)
             platform_1 = Platform(300,platform_1_y)
 
-            platform_2_y = random.randint(100,300)
+            platform_2_y = random.randint(700,800)
             platform_2 = Platform(700,platform_2_y)
 
             return platform_1,platform_2
@@ -142,11 +141,11 @@ class CombatRoom:
 
             return platform
 
-        def high_platforms():
-            platform_1_y = random.randint(500,600)
+        def low_platforms():
+            platform_1_y = random.randint(200,300)
             platform_1 = Platform(300,platform_1_y)
 
-            platform_2_y = random.randint(500,600)
+            platform_2_y = random.randint(200,300)
             platform_2 = Platform(700,platform_2_y)
 
             return platform_1,platform_2
@@ -168,7 +167,7 @@ class CombatRoom:
         enemy_types = ['drone','melee','ranger']
         enemies = []
 
-        for _ in range(1,5):
+        for _ in range(1,8):
             enemies.append(random.choice(enemy_types))
 
         self.enemies = enemies
@@ -189,7 +188,7 @@ class BossRoom(CombatRoom):
         # basic attributes will be #platforms and art
         self.image = pygame.image.load("images//BossRoom.png")
 
-    def boss_reward():
+    def boss_reward(screen):
         # override preset reward and genreate boss-specific reward (something special needed for certain upgrades)
         boss_sheet = pygame.image.load("images//boss-sheet.png").convert_alpha()
         sprite = (40,30,20,20)

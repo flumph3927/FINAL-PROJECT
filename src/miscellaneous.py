@@ -73,7 +73,7 @@ def run_upgrade(scrn,player):
     elements=pygame.image.load('images/HudElements.png').convert_alpha()
     upgrades=[0,1,2,3]
     #choose three at random (weighted)
-    for i in player.upgrade:
+    for i in player.upgrades:
         if i in upgrades:
             upgrades.remove(i)
     if upgrades==[]: return False
