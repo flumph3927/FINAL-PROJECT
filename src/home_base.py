@@ -181,6 +181,7 @@ class WeaponNPC(NPC):
                                 #if enter clicked
                                 if event.key==pygame.K_RETURN:
                                     #return weapon player.weapon
+                                    player.weapon=wpn
                                     scrn.fill((0,0,0))
                                     return player
                                 #if esc clicked
