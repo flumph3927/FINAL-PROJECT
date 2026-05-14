@@ -24,7 +24,7 @@ class NPC:
 class UpgradeNPC(NPC):
 
     #create function speak, get screen,weapon, user upgrades, and currency
-    def speak(self,scrn,wpn,u_up,money):
+    def speak(self,scrn,player):
         #set upgrade tree
         weapons=pygame.image.load('images/perm-upgrades-pixilart.png').convert_alpha()
         tree={'+1 HEALTH':[pygame.transform.scale(weapons.subsurface((5, 10, 10, 10)),(60,60)),470,200,None,100],'2X DAMAGE':[pygame.transform.scale(weapons.subsurface((50, 10, 10, 10)),(60,60)),200,300,'+1 HEALTH',100],'2X I-FRAMES':[pygame.transform.scale(weapons.subsurface((20, 10, 10, 10)),(60,60)),470,300,'+1 HEALTH',100],'+1 HEALTH 2':[pygame.transform.scale(weapons.subsurface((5, 10, 10, 10)),(60,60)),740,300,'+1 HEALTH',100],'3X DAMAGE':[pygame.transform.scale(weapons.subsurface((65, 10, 10, 10)),(60,60)),200,400,'2X DAMAGE',100],'DOUBLE JUMP':[pygame.transform.scale(weapons.subsurface((35, 10, 10, 10)),(60,60)),470,400,'2X I-FRAMES',100],'+1 HEALTH 3':[pygame.transform.scale(weapons.subsurface((5, 10, 10, 10)),(60,60)),740,400,'+1 HEALTH 2',100],'+2 HEALTH':[pygame.transform.scale(weapons.subsurface((5, 10, 10, 10)),(60,60)),740,500,'+1 HEALTH 3',100]}
@@ -37,7 +37,7 @@ class UpgradeNPC(NPC):
             scrn.fill((0,0,0))
             #place all user upgrades in their place on screen, upgrade sprite with name below
             for i in buttons:
-                if i.text in u_up:
+                if i.text in player.meta_upgrades:
                     i.draw(scrn)
             #place esc to exit message in corner
             font=pygame.font.SysFont('',60)
@@ -48,13 +48,13 @@ class UpgradeNPC(NPC):
             #draw amount of coins
             coin=pygame.transform.scale(pygame.image.load('images/HudElements.png').convert_alpha().subsurface((200,110,100,100)),(60,60))
             scrn.blit(coin,(500,20))
-            text=font.render(str(money), True, (255, 255, 255))
+            text=font.render(str(player.money), True, (255, 255, 255))
             scrn.blit(text,(560,30))
             #loop through upgrades as upgrade
             for i in buttons:
                 if tree[i.text][3]:
                     #if user upgrades contain all prerequisites of upgrade
-                    if tree[i.text][3] in u_up:
+                    if tree[i.text][3] in player.meta_upgrades:
                         #place upgrade in appropriate position on screen
                         i.draw(scrn)
                 else: i.draw(scrn)
@@ -77,9 +77,9 @@ class UpgradeNPC(NPC):
                             #if user has enough currency, place enter to get box on screen
                             text=font.render(i.text, True, (255, 255, 255))
                             scrn.blit(text,(370,260))
-                            if i.text in u_up:
+                            if i.text in player.meta_upgrades:
                                 text=font.render('OWNED', True, (255, 255, 255))
-                            elif money>=tree[i.text][4]:
+                            elif player.money>=tree[i.text][4]:
                                 text=font.render('ENTER TO BUY FOR'+str(tree[i.text][4]), True, (255, 255, 255))
                             else:
                                 text=font.render('COSTS '+str(tree[i.text][4]), True, (255, 255, 255))
@@ -91,23 +91,29 @@ class UpgradeNPC(NPC):
                                 if event.type==pygame.KEYDOWN:
                                     #if enter clicked
                                     if event.key==pygame.K_RETURN:
-                                        if tree[i.text][4]<=money:
-                                            #return upgrade selected
-                                            u_up.append(i.text)
-                                            money-=tree[i.text][4]
+                                        if tree[i.text][4]<=player.money:
+                                            #return upgrade player.weapon
+                                            player.meta_upgrades.append(i.text)
+                                            player.money-=tree[i.text][4]
+                                            #do actual change
+                                            if i.text in ['+1 HEALTH','+1 HEALTH 2','+1 HEALTH 3']: player.max_health+=1
+                                            elif i.text=='+2 HEALTH': player.max_health+=2
+                                            elif i.text in ['+2X DAMGE','3X DAMAGE']: player.damage_mod+=1
+                                            elif i.text=='DOUBLE JUMP': pass
+                                            elif i.text=='2X I-FRAMES': player.iframe_mod==2
                                             loopa=False
                                     #if esc clicked
                                     if event.key==pygame.K_ESCAPE:
                                         #break out of loop
                                         loopa=False
-        return u_up,wpn,money
+        return player
 
 
 #create class WeaponNPC, subclass of NPC
 class WeaponNPC(NPC):
 
     #create function speak, get screen
-    def speak(self,scrn,selected,upss,money):
+    def speak(self,scrn,player):
         weapons=pygame.image.load('images/weapon.png').convert_alpha()
         gaunt=miscellaneous.Button(60,60,pygame.transform.scale(weapons.subsurface((80, 180, 100, 100)),(60,60)),1,'GAUNTLET',300,700)
         gun=miscellaneous.Button(60,60,pygame.transform.scale(weapons.subsurface((475, 180, 100, 100)),(60,60)),2,'M1 GARAND',640,700)
@@ -118,8 +124,8 @@ class WeaponNPC(NPC):
             #place all weapons on screen as name and image
             gaunt.draw(scrn)
             gun.draw(scrn)
-            #place selected weapon: selected weapon on top of screen
-            if selected==1:
+            #place player.weapon weapon: player.weapon weapon on top of screen
+            if player.weapon==1:
                 shown=pygame.transform.scale(weapons.subsurface((80, 180, 100, 100)),(60,60))
             else: shown=pygame.transform.scale(weapons.subsurface((475, 180, 100, 100)),(60,60))
             scrn.blit(shown,(470,400))
@@ -129,7 +135,7 @@ class WeaponNPC(NPC):
             scrn.blit(text,(330,150))
             text=font.render('SELECTED WEAPON:',True, (255, 255, 255))
             scrn.blit(text,(300,300))
-            if selected==1:
+            if player.weapon==1:
                 text=font.render('GAUNTLET',True, (255, 255, 255))
                 scrn.blit(text,(400,350))
             else:
@@ -145,16 +151,16 @@ class WeaponNPC(NPC):
                     if event.key==pygame.K_ESCAPE:
                         #break out of loop
                         lop=False
-                if gaunt.is_clicked(event): wpn=1
-                elif gun.is_clicked(event): wpn=2
-                else: wpn=0
-                if wpn>0:
+                if gaunt.is_clicked(event): player.weapon=1
+                elif gun.is_clicked(event): player.weapon=2
+                else: player.weapon=0
+                if player.weapon>0:
                     #loop
                     slcted=True
                     while slcted:
                         scrn.fill((0,0,0))
                         #draw weapon clicked big with description added and an esc to exit on screen
-                        if wpn==1:
+                        if player.weapon==1:
                             shown=pygame.transform.scale(weapons.subsurface((80, 180, 100, 100)),(300,300))
                             text=font.render('GAUNTLET - MELEE', True, (255, 255, 255))
                         else: 
@@ -174,16 +180,16 @@ class WeaponNPC(NPC):
                             if event.type==pygame.KEYDOWN:
                                 #if enter clicked
                                 if event.key==pygame.K_RETURN:
-                                    #return weapon selected
+                                    #return weapon player.weapon
                                     scrn.fill((0,0,0))
-                                    return upss, wpn, money
+                                    return player
                                 #if esc clicked
                                 if event.key==pygame.K_ESCAPE:
                                     #break out of loop
                                     slcted=False
                                     time.sleep(0.1)
         scrn.fill((0,0,0))
-        return upss, wpn, money
+        return player
 
 
 #create class TutorialNPC, sublclass of NPC
@@ -192,7 +198,7 @@ class TutorialNPC(NPC):
     #create function speak, get screen
     def speak(self,scrn,player):
         #run function tutorial on screen
-        tutorial(scrn,player)
+        return tutorial(scrn,player)
     
 
 #create function tutorial, get screen
@@ -258,7 +264,7 @@ def tutorial(scrn,player):
             elif step==2:
                 enemy=sprite_manage.RangerEnemy(random.randint(700, 950), 800)
             elif step==3:
-                return
+                return player
         elif player.health<=0:
             player.health=player.max_health
             text=font.render('REVIVED FOR TUTORIAL', True, (255, 255, 255))
@@ -299,6 +305,7 @@ def tutorial(scrn,player):
                     player.shoot_timer = 15
                     player_bullets.add(sprite_manage.Bullet(player.rect.centerx, player.rect.centery, mx, my, 1))
                     player.shoot_cooldown = 25
+    return player
 
 #create function home, get scrn, difficulties
 def home(scrn,diffs,player,filepath):
@@ -353,8 +360,7 @@ def home(scrn,diffs,player,filepath):
                 if event.type==pygame.KEYDOWN:
                     if event.key==pygame.K_e:
                         #run that npc's speak function
-                        if room==3: current.speak(scrn,player)
-                        else: player.meta_upgrades, player.weapon,player.money = current.speak(scrn,player.weapon,player.meta_upgrades,player.money)
+                        player = current.speak(scrn,player)
                     elif event.key==pygame.K_w or event.key==pygame.K_UP or event.key==pygame.K_SPACE:
                         player.jump()
                     elif event.key==pygame.K_ESCAPE:

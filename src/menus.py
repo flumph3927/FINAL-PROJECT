@@ -19,8 +19,8 @@ def loadgame_menu(screen):
         screen.blit(bg_image,(0,0))
         return_button = Button(400,100,(255,0,0),(0,255,0),"Return to Main Menu",300,700)
         save_one = Button(400,100,(255,0,0),(0,255,0),"Load Save File One",300,100)
-        save_two = Button(400,100,(255,0,0),(0,255,0),"Load Save File One",300,300)
-        save_three = Button(400,100,(255,0,0),(0,255,0),"Load Save File One",300,500)
+        save_two = Button(400,100,(255,0,0),(0,255,0),"Load Save File Two",300,300)
+        save_three = Button(400,100,(255,0,0),(0,255,0),"Load Save File Three",300,500)
 
         return_button.draw(screen)
         save_one.draw(screen)
