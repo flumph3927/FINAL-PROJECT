@@ -34,11 +34,10 @@ import time
 pygame.init()
         
 
-def run_loop(save_path):
+def run_loop(save_path,player):
     alive = True
     reward_given = False
     supper = False
-    player = Player(save_path)
     enemies = pygame.sprite.Group()
     player_bullets = pygame.sprite.Group()
     enemy_bullets = pygame.sprite.Group()
