@@ -60,7 +60,7 @@ def main_loop():
             trigger_run = home(screen,False,player,save_path)
 
             if trigger_run in [True,False]:
-                player = run_loop(save_path)
+                player = run_loop(save_path,player)
             elif trigger_run == "Exit":
                 del player
                 break
