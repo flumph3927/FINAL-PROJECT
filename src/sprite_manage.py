@@ -75,7 +75,7 @@ class Player(pygame.sprite.Sprite):
             self.gun_surf = pygame.Surface((32, 16)); self.gun_surf.fill((100, 100, 100))
 
         ###########Have variable file path############
-        self.user_data = load_game(file_path="documents/savefile_one.csv")
+        self.user_data = load_game(file_path=save_file)
         self.max_health = 5.0
         self.damage_mod = float(self.user_data["damage_mod"]) ##########Implement at each damge use #############
         self.iframes_mod = float(self.user_data["i_frame_mod"]) #########Implement this at each of the uses of player i frames ###########
@@ -84,7 +84,6 @@ class Player(pygame.sprite.Sprite):
         # Stats
         self.speed, self.floor_y, self.y_velocity = 8, 800, 0
         self.gravity, self.jump_strength = 0.8, -16.5
-        self.health = self.max_health
         self.iframes = 0
         self.is_jumping = False
         self.is_attacking, self.attack_timer = False, 0
@@ -100,6 +99,14 @@ class Player(pygame.sprite.Sprite):
         self.money = float(self.user_data["money"])
         self.meta_upgrades = self.user_data['upgrades']
         self.upgrades = []
+        self.old_upgrades=[]
+        for i in self.meta_upgrades:
+            if i in ['+1 HEALTH','+1 HEALTH 2','+1 HEALTH 3']: self.max_health+=1
+            elif i=='+2 HEALTH': self.max_health+=2
+            elif i in ['+2X DAMAGE','3X DAMAGE']: self.damage_mod+=1
+            elif i=='DOUBLE JUMP': pass
+            elif i=='2X I-FRAMES': self.iframe_mod==2
+        self.health = self.max_health
 
     def jump(self):
         if not self.is_jumping:
@@ -128,15 +135,18 @@ class Player(pygame.sprite.Sprite):
             landed = True
 
         # Platform collision
-        if not landed and self.y_velocity > 0:
-            for plat in platforms:
-                if self.rect.colliderect(plat.sprite_rect):
-                    if self.rect.bottom - self.y_velocity <= plat.sprite_rect.top + 5:
-                        self.rect.bottom = plat.sprite_rect.top  # ← also uses rect.bottom
-                        self.y_velocity = 0
-                        self.is_jumping = False
-                        landed = True
-                        break
+        if platforms == None:
+            pass
+        else:
+            if not landed and self.y_velocity > 0:
+                for plat in platforms:
+                    if self.rect.colliderect(plat.sprite_rect):
+                        if self.rect.bottom - self.y_velocity <= plat.sprite_rect.top + 5:
+                            self.rect.bottom = plat.sprite_rect.top  # ← also uses rect.bottom
+                            self.y_velocity = 0
+                            self.is_jumping = False
+                            landed = True
+                            break
 
         # Timers
         if self.attack_timer > 0: self.attack_timer -= 1
@@ -379,7 +389,7 @@ class RangerEnemy(pygame.sprite.Sprite):
 #1 damage
 #2 equals charge
 
-def setup(player,enemies,player_bullets,enemy_bullets,supper):
+def setup(player,enemies,player_bullets,enemy_bullets,supper,reward_given,alive,save_path):
 
     # List containing enemy types to spawn
     enemy_type_list = []
@@ -387,7 +397,7 @@ def setup(player,enemies,player_bullets,enemy_bullets,supper):
     
     
 
-    room = CombatRoom(900,900) # Initilize the room
+    room = CombatRoom(900,900) # Initialize the room
     room.generate_enemies() # Generate enemy list, similar to above code
     platforms = room.generate_platforms() # Generate platforms, to be drawn later.
 
@@ -420,22 +430,25 @@ def setup(player,enemies,player_bullets,enemy_bullets,supper):
         room.draw(screen,platforms)
         player.draw(screen)
         for i in player.upgrades:
-            if i == 0:
-                player.max_health += 1
-                player.health = player.max_health
-            elif i == 1:
-                player.damage_mod += 1
-            elif i == 2:
-                player.max_charge -= 1
-            else:
-                pass
+            if i not in player.old_upgrades:
+                if i == 0:
+                    player.health += 1
+                elif i == 1:
+                    player.damage_mod += 1
+                elif i == 2:
+                    player.max_charge -= 1
+        player.old_upgrades=player.upgrades
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 pygame.quit()
             
             if event.type == pygame.KEYDOWN:
-                if event.key == pygame.K_m:
-                    enemies.add(Enemy(random.randint(150, 650), random.randint(150, 450)))
+                if event.key == pygame.K_ESCAPE:
+                    exit_check = miscellaneous.pause(screen, player, save_path)
+                    if exit_check == "Exit":
+                        # Return to home base without saving run progress
+                        alive = False
+                        return alive, player
                 if player.health > 0:
                     if event.key in [pygame.K_UP, pygame.K_w, pygame.K_SPACE]:
                         player.jump()
@@ -537,7 +550,9 @@ def setup(player,enemies,player_bullets,enemy_bullets,supper):
                 enemy.kill()
             enemy_bullets.empty()
             player_bullets.empty()
-            return False, player
+            alive = False
+            player.health = player.max_health
+            return alive, player
 
         if supper == True:
             player.fix += 1
@@ -547,7 +562,7 @@ def setup(player,enemies,player_bullets,enemy_bullets,supper):
                 supper = False
 
 
-        reward_given = False
+        
         if bool(enemies) == False and reward_given == False:
             reward = Rewards("Reward","images\\RewardChest.png")
             reward.show(screen,(450,450))
@@ -567,6 +582,7 @@ def setup(player,enemies,player_bullets,enemy_bullets,supper):
         pygame.display.flip()
         clock.tick(60)
 
+    return alive, player
 
 
 ####Fix meta upgrades####

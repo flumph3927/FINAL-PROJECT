@@ -1,1 +1,2 @@
-# fieldnames to be put here
+max_health,damage_mod,i_frame_mod,money,upgrades
+6.0,1.0,1.0,25.0,documents/three_upgrades.csv
