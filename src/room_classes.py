@@ -65,13 +65,6 @@ class HealingRoom:
         
         # basic attributes are sprites, width, height, and heal_used
 
-    def heal(self,player):
-        if player.rect.colliderect(self.table_trigger) == True and self.heal_used == False:
-            self.heal_used = True
-            healing = random.randint(1,2.5)
-            player.health += healing
-            if player.health > player.max_health:
-                player.health = player.max_health
         # triggered when user uses the heal thing and heal_used is false
         # generate a random number between 1 and 2.5, add that many hearts
         # set heal_used to true
@@ -108,7 +101,7 @@ pygame.init()
 class Platform:
     def __init__(self,x,y):
         self.sprite = pygame.image.load("images\\NewPlatform.png").convert_alpha()
-        self.sprite = pygame.transform.scale(self.sprite,(75,150))
+        self.sprite = pygame.transform.scale(self.sprite.subsurface((0,5,16,5)),(75,45))
         self.sprite_rect = pygame.Rect(x,y,100,30)
 
 
