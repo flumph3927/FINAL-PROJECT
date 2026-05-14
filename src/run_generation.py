@@ -4,9 +4,12 @@
 # from combat import *
 # import all neccesary sprites
 
+from tkinter import font
+
 from room_classes import *
 from sprite_manage import *
 import pygame
+import time
 
 # def generate_room(room_count):
     # check if room count is 4 or 5
@@ -40,20 +43,30 @@ def run_loop(save_path):
     player_bullets = pygame.sprite.Group()
     enemy_bullets = pygame.sprite.Group()
     room_count = 1
+    room_total = random.randint(5,10)
     
     while True:
-        if room_count <= 4:
+        if room_count <= room_total:
             room_count += 1
             alive, player = setup(player,enemies,player_bullets,enemy_bullets,supper,reward_given,alive,save_path)
 
             if alive == False:
                 return player
-            else:
-                continue
-        elif room_count == 5:
-            pass # generate healing room
         else:
-            pass # generate boss room
+            screen.fill((0,0,0))
+            font = pygame.font.SysFont(None, 48)
+            text_surface_one = font.render("You have reached the end of the developed game. Thank you for playing!", True, (255, 255, 255))
+            text_rect = text_surface_one.get_rect(center=(500,500))
+            screen.blit(text_surface_one, text_rect)
+            text_surface_two = font.render("You will be returned to the home base in 20 seconds.", True, (255, 255, 255))
+            text_rect = text_surface_two.get_rect(center=(500,550))
+            screen.blit(text_surface_two, text_rect)
+            pygame.display.flip()
+            time.sleep(20)
+            return player
+
+
+        
 if __name__ == "__main__":
     run_loop('documents/savefile_one.csv')
 # What will need to be done from here is that we need to get room generation running at the start of setup so it actually generates the correct room.
