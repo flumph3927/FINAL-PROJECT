@@ -89,7 +89,6 @@ class Player(pygame.sprite.Sprite):
         self.is_attacking, self.attack_timer = False, 0
         self.is_shooting, self.shoot_timer = False, 0
         self.shoot_cooldown = 0
-        """self.weapon_choices = self.user_data["weapons"] #########Check this when switching weapon ###########"""
         self.weapon = 2
         self.max_charge = 4
         self.charge = 0
