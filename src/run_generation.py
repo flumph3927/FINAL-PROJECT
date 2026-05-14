@@ -50,18 +50,24 @@ def run_loop(save_path,player):
             alive, player = setup(player,enemies,player_bullets,enemy_bullets,supper,reward_given,alive,save_path)
 
             if alive == False:
+                player.upgrades = []
                 return player
         else:
             screen.fill((0,0,0))
             font = pygame.font.SysFont(None, 48)
-            text_surface_one = font.render("You have reached the end of the developed game. Thank you for playing!", True, (255, 255, 255))
+            text_surface_one = font.render("You have reached the end of the developed game.", True, (255, 255, 255))
             text_rect = text_surface_one.get_rect(center=(500,500))
             screen.blit(text_surface_one, text_rect)
-            text_surface_two = font.render("You will be returned to the home base in 20 seconds.", True, (255, 255, 255))
+            text_surface_three = font.render("Thank you for playing!", True, (255, 255, 255))
+            text_rect = text_surface_three.get_rect(center=(500,500))
+            screen.blit(text_surface_three, text_rect)
+            text_surface_two = font.render("You will be returned to the home base in 10 seconds.", True, (255, 255, 255))
             text_rect = text_surface_two.get_rect(center=(500,550))
             screen.blit(text_surface_two, text_rect)
             pygame.display.flip()
-            time.sleep(20)
+            time.sleep(10)
+            player.upgrades = []
+            player.health = player.max_health
             return player
 
 
