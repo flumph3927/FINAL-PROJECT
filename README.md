@@ -1,7 +1,7 @@
 # Decypher
 ***
 ![running_game](images/Screenshot%202026-05-13%20094401.png)
-Decypher is a rougelite game based around a robot, named Cypher. Cypher has been tossed out of their city, and down into the wastelands below. They must now climb their way back up through rooms of rogue or enemy robots, to make it back. Cypher is not alone in their journey though, as they have allies who are willing to help, some with a story similar to Cypher, like the engineer from the city above who can modify Cypher for runs to give them a better chance, and some who've been in the wasteland since creation, like the weaponsmith who can allow Cypher to switch their weapons, and an older robot who can teach Cypher things they might not know. While on their run, Cypher can clear rooms, and get rewards that will upgrade them for that run. Defeating the bosses of areas can give you drops, which are used to get certain meta-progression upgrades.
+Decypher is a rougelite game based around a robot, named Cypher. Cypher has been tossed out of their city, and down into the wastelands below. They must now climb their way back up through rooms of rogue or enemy robots, to make it back. Cypher is not alone in their journey though, as they have allies who are willing to help, some with a story similar to Cypher, like the engineer from the city above who can modify Cypher for runs to give them a better chance, and some who've been in the wasteland since creation, like the weaponsmith who can allow Cypher to switch their weapons, and an older robot who can teach Cypher things they might not know. While on their run, Cypher can clear rooms, and get rewards that will upgrade them for that run. Defeating the bosses of areas can give you drops, which are used to get certain meta-progression upgrades(Not implemented).
 
 ## How to use
 ***
@@ -16,12 +16,12 @@ Decypher is a rougelite game based around a robot, named Cypher. Cypher has been
 - Able to save and load slots
 - Has a demo mode which will throw you straight into a run and not give meta progression
 - Each weapon has three different attacks, a main one, a secondary, and an ultimate.
-- Multiple enemy types, including a boss with two phases
+- Multiple enemy types
 - Has meta progression
 - In-run upgrades to make each run a little different.
-- Six different rooms, including a healing one and a boss room in run.
+- Four different rooms.
 - A home base with a room where you can change weapons, access meta-progression, and a tutorial before jumping into your next run.
-- As of right now, only the first area and boss is made
+- As of right now, only the first area is made, boss not done yet
 
 ## Contributors
 ***
