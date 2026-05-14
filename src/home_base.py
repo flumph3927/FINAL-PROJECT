@@ -27,7 +27,7 @@ class UpgradeNPC(NPC):
     def speak(self,scrn,player):
         #set upgrade tree
         weapons=pygame.image.load('images/perm-upgrades-pixilart.png').convert_alpha()
-        tree={'+1 HEALTH':[pygame.transform.scale(weapons.subsurface((5, 10, 10, 10)),(60,60)),470,200,None,100],'2X DAMAGE':[pygame.transform.scale(weapons.subsurface((50, 10, 10, 10)),(60,60)),200,300,'+1 HEALTH',100],'2X I-FRAMES':[pygame.transform.scale(weapons.subsurface((20, 10, 10, 10)),(60,60)),470,300,'+1 HEALTH',100],'+1 HEALTH 2':[pygame.transform.scale(weapons.subsurface((5, 10, 10, 10)),(60,60)),740,300,'+1 HEALTH',100],'3X DAMAGE':[pygame.transform.scale(weapons.subsurface((65, 10, 10, 10)),(60,60)),200,400,'2X DAMAGE',100],'DOUBLE JUMP':[pygame.transform.scale(weapons.subsurface((35, 10, 10, 10)),(60,60)),470,400,'2X I-FRAMES',100],'+1 HEALTH 3':[pygame.transform.scale(weapons.subsurface((5, 10, 10, 10)),(60,60)),740,400,'+1 HEALTH 2',100],'+2 HEALTH':[pygame.transform.scale(weapons.subsurface((5, 10, 10, 10)),(60,60)),740,500,'+1 HEALTH 3',100]}
+        tree={'+1 HEALTH':[pygame.transform.scale(weapons.subsurface((5, 10, 10, 10)),(60,60)),470,200,None,100],'2X DAMAGE':[pygame.transform.scale(weapons.subsurface((50, 10, 10, 10)),(60,60)),200,300,'+1 HEALTH',150],'2X I-FRAMES':[pygame.transform.scale(weapons.subsurface((20, 10, 10, 10)),(60,60)),470,300,'+1 HEALTH',150],'+1 HEALTH 2':[pygame.transform.scale(weapons.subsurface((5, 10, 10, 10)),(60,60)),740,300,'+1 HEALTH',150],'3X DAMAGE':[pygame.transform.scale(weapons.subsurface((65, 10, 10, 10)),(60,60)),200,400,'2X DAMAGE',200],'DOUBLE JUMP':[pygame.transform.scale(weapons.subsurface((35, 10, 10, 10)),(60,60)),470,400,'2X I-FRAMES',50],'+1 HEALTH 3':[pygame.transform.scale(weapons.subsurface((5, 10, 10, 10)),(60,60)),740,400,'+1 HEALTH 2',200],'+2 HEALTH':[pygame.transform.scale(weapons.subsurface((5, 10, 10, 10)),(60,60)),740,500,'+1 HEALTH 3',250]}
         #loop
         buttons=[]
         for i in tree:
@@ -151,16 +151,16 @@ class WeaponNPC(NPC):
                     if event.key==pygame.K_ESCAPE:
                         #break out of loop
                         lop=False
-                if gaunt.is_clicked(event): player.weapon=1
-                elif gun.is_clicked(event): player.weapon=2
-                else: player.weapon=0
-                if player.weapon>0:
+                if gaunt.is_clicked(event): wpn=1
+                elif gun.is_clicked(event): wpn=2
+                else: wpn=0
+                if wpn>0:
                     #loop
                     slcted=True
                     while slcted:
                         scrn.fill((0,0,0))
                         #draw weapon clicked big with description added and an esc to exit on screen
-                        if player.weapon==1:
+                        if wpn==1:
                             shown=pygame.transform.scale(weapons.subsurface((80, 180, 100, 100)),(300,300))
                             text=font.render('GAUNTLET - MELEE', True, (255, 255, 255))
                         else: 
@@ -264,6 +264,7 @@ def tutorial(scrn,player):
             elif step==2:
                 enemy=sprite_manage.RangerEnemy(random.randint(700, 950), 800)
             elif step==3:
+                player.health=player.max_health
                 return player
         elif player.health<=0:
             player.health=player.max_health
@@ -305,6 +306,7 @@ def tutorial(scrn,player):
                     player.shoot_timer = 15
                     player_bullets.add(sprite_manage.Bullet(player.rect.centerx, player.rect.centery, mx, my, 1))
                     player.shoot_cooldown = 25
+    player.health=player.max_health
     return player
 
 #create function home, get scrn, difficulties
