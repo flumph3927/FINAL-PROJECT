@@ -84,7 +84,6 @@ class Player(pygame.sprite.Sprite):
         # Stats
         self.speed, self.floor_y, self.y_velocity = 8, 800, 0
         self.gravity, self.jump_strength = 0.8, -16.5
-        self.health = self.max_health
         self.iframes = 0
         self.is_jumping = False
         self.is_attacking, self.attack_timer = False, 0
@@ -100,6 +99,14 @@ class Player(pygame.sprite.Sprite):
         self.money = float(self.user_data["money"])
         self.meta_upgrades = self.user_data['upgrades']
         self.upgrades = []
+        self.old_upgrades=[]
+        for i in self.meta_upgrades:
+            if i in ['+1 HEALTH','+1 HEALTH 2','+1 HEALTH 3']: self.max_health+=1
+            elif i=='+2 HEALTH': self.max_health+=2
+            elif i in ['+2X DAMAGE','3X DAMAGE']: self.damage_mod+=1
+            elif i=='DOUBLE JUMP': pass
+            elif i=='2X I-FRAMES': self.iframe_mod==2
+        self.health = self.max_health
 
     def jump(self):
         if not self.is_jumping:
@@ -423,15 +430,14 @@ def setup(player,enemies,player_bullets,enemy_bullets,supper,reward_given,alive,
         room.draw(screen,platforms)
         player.draw(screen)
         for i in player.upgrades:
-            if i == 0:
-                player.max_health += 1
-                player.health = player.max_health
-            elif i == 1:
-                player.damage_mod += 1
-            elif i == 2:
-                player.max_charge -= 1
-            else:
-                pass
+            if i not in player.old_upgrades:
+                if i == 0:
+                    player.health += 1
+                elif i == 1:
+                    player.damage_mod += 1
+                elif i == 2:
+                    player.max_charge -= 1
+        player.old_upgrades=player.upgrades
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 pygame.quit()
