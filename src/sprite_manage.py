@@ -83,7 +83,7 @@ class Player(pygame.sprite.Sprite):
 
         # Stats
         self.speed, self.floor_y, self.y_velocity = 8, 800, 0
-        self.gravity, self.jump_strength = 0.8, -16.5
+        self.gravity, self.jump_strength = 0.8, -20
         self.iframes = 0
         self.is_jumping = False
         self.is_attacking, self.attack_timer = False, 0
@@ -569,8 +569,7 @@ def setup(player,enemies,player_bullets,enemy_bullets,supper,reward_given,alive,
             reward_given = True
             del reward
 
-        if player.rect.x in range(850,900) and bool(enemies) == False:
-            print("This would generate the next room if it actually worked")
+        if player.rect.x in range(900) and bool(enemies) == False:
             break
                 
 
