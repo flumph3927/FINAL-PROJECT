@@ -56,13 +56,6 @@ import pygame
         # load background and npc sprite
         # load shop items and prices floating above them
 
-class HealingRoom:
-    def __init__(self):
-        self.image = pygame.image.load("images/HealingRoom.png")
-        self.width, self.height = self.image.get_size()
-        self.table_trigger = pygame.Rect(70,110,20,20)
-        self.heal_used = False
-        
         # basic attributes are sprites, width, height, and heal_used
 
         # triggered when user uses the heal thing and heal_used is false
@@ -173,18 +166,3 @@ class CombatRoom:
         self.platforms = self.generate_platforms()
         for i in platforms:
             i.draw(screen)
-
-        
-
-class BossRoom(CombatRoom):
-    def __init__(self):
-        # basic attributes will be #platforms and art
-        self.image = pygame.image.load("images//BossRoom.png")
-
-    def boss_reward(screen):
-        # override preset reward and genreate boss-specific reward (something special needed for certain upgrades)
-        boss_sheet = pygame.image.load("images//boss-sheet.png").convert_alpha()
-        sprite = (40,30,20,20)
-        boss_drop = boss_sheet.subsurface(sprite)
-        boss_drop = pygame.transform.scale(boss_drop,(100,100))
-        screen.blit(boss_drop, (400,400))
