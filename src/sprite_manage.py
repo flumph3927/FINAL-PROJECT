@@ -89,7 +89,7 @@ class Player(pygame.sprite.Sprite):
         self.is_attacking, self.attack_timer = False, 0
         self.is_shooting, self.shoot_timer = False, 0
         self.shoot_cooldown = 0
-        self.weapon = 2
+        self.weapon = 1
         self.max_charge = 4
         self.charge = 0
         self.money = 0
